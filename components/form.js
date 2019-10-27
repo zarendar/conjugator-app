@@ -18,9 +18,9 @@ export default function Form({
 }) {
   return (
     <div>
-      <H6>Czas teraźniejszy</H6>
+      <H6 marginTop={'scale300'} marginBottom={'scale300'}>Czas teraźniejszy</H6>
       {inputs.map(input => (
-        <FormControl key={input} label={input}>
+        <FormControl key={input} error={errors[input]} label={input}>
           <Input
             disabled={isSubmitting}
             name={input}

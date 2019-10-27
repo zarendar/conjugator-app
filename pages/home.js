@@ -14,7 +14,7 @@ function validate(fromData, conjugation) {
 
   for (let i in conjugation) {
     if (fromData[i] !== conjugation[i]) {
-      errors[i] = 'Incorrect';
+      errors[i] = conjugation[i];
     } else {
       success[i] = true;
     }
@@ -103,7 +103,7 @@ const Home = () => {
   }
 
   return (
-    <Block padding={'scale800'}>
+    <Block padding={'scale300'}>
       <Search
         isOptionsLoading={isVerbsLoading}
         searchOptions={verbs.map(fromVerbToOption)}
@@ -111,11 +111,11 @@ const Home = () => {
         onSearchChange={handleSearchChange}
         onSearchInputChange={handleInputSearchChange}
       />
-      <Block paddingTop={'scale600'}>
+      <Block paddingTop={'scale300'}>
         {isConjugationLoading && <Spinner />}
         {verb && !isConjugationLoading && (
           <React.Fragment>
-            <H5>
+            <H5 marginTop={'scale300'} marginBottom={'scale300'}>
               Bezokolicznik: <strong>{verb}</strong> (
               <Block as={'span'} color={'mono800'}>
                 {translate}
