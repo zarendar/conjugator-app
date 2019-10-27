@@ -13,7 +13,8 @@ function validate(fromData, conjugation) {
   const success = {};
 
   for (let i in conjugation) {
-    if (fromData[i] !== conjugation[i]) {
+    const currentInput = fromData[i] && fromData[i].toLowerCase();
+    if (currentInput !== conjugation[i]) {
       errors[i] = conjugation[i];
     } else {
       success[i] = true;
