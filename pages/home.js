@@ -116,7 +116,7 @@ const Home = () => {
         {isConjugationLoading && <Spinner />}
         {verb && !isConjugationLoading && (
           <React.Fragment>
-            <H5 marginTop={'scale300'} marginBottom={'scale300'}>
+            <H5 marginTop={'scale300'} marginBottom={'scale600'}>
               Bezokolicznik: <strong>{verb}</strong> (
               <Block as={'span'} color={'mono800'}>
                 {translate}
