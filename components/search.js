@@ -3,6 +3,7 @@ import React from 'react';
 import {Select, TYPE} from 'baseui/select';
 
 const Search = ({
+  isOptionsLoading,
   searchOptions,
   searchValue,
   onSearchChange,
@@ -10,6 +11,7 @@ const Search = ({
 }) => {
   return (
     <Select
+      isLoading={isOptionsLoading}
       options={searchOptions}
       placeholder="verb"
       maxDropdownHeight="300px"

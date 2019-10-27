@@ -37,6 +37,10 @@ const Home = () => {
   const [conjugation, setConjugation] = React.useState({});
   const [translate, setTranslate] = React.useState('');
   const [
+    isVerbsLoading,
+    setIsVerbsLoadingLoading,
+  ] = React.useState(false);
+  const [
     isConjugationLoading,
     setIsConjugationLoading,
   ] = React.useState(false);
@@ -45,13 +49,16 @@ const Home = () => {
   const [success, setSuccess] = React.useState({});
 
   function handleInputSearchChange(event) {
+    setIsVerbsLoadingLoading(true)
+
     fetch(`/api/search?q=${event.target.value}`)
       .then(r => r.json())
       .then((data) => {
+        setIsVerbsLoadingLoading(false)
         setVerbs(data);
       })
       .catch(() => {
-        setIsConjugationLoading(false);
+        setIsVerbsLoadingLoading(false)
       });
   }
 
@@ -67,8 +74,11 @@ const Home = () => {
         setIsConjugationLoading(false);
         setConjugation(data.conjugation);
         setTranslate(data.translate);
+        setVerb(option.id);
+      })
+      .catch(() => {
+        setIsConjugationLoading(false);
       });
-    setVerb(option.id);
   }
 
   function handleFormChange(event) {
@@ -95,6 +105,7 @@ const Home = () => {
   return (
     <Block padding={'scale800'}>
       <Search
+        isOptionsLoading={isVerbsLoading}
         searchOptions={verbs.map(fromVerbToOption)}
         searchValue={verb}
         onSearchChange={handleSearchChange}
