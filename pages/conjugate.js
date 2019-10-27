@@ -36,8 +36,9 @@ const fromVerbToOption = verb => ({
 const Home = () => {
   const router = useRouter();
 
+
+  const {verb} = router.query;
   const [verbs, setVerbs] = React.useState([]);
-  const [verb, setVerb] = React.useState(router.query.verb || '');
   const [conjugation, setConjugation] = React.useState({});
   const [translate, setTranslate] = React.useState('');
   const [
@@ -53,19 +54,17 @@ const Home = () => {
   const [success, setSuccess] = React.useState({});
 
   React.useEffect(() => {
-    if (router.query.verb) {
-      setVerb(router.query.verb)
-      emitVerbsSearch(router.query.verb)
-      emitConjugation(router.query.verb)
+    if (verb) {
+      emitVerbsSearch(verb)
+      emitConjugation(verb)
     }
-  }, [router.query.verb])
+  }, [verb])
 
   function handleInputSearchChange(event) {
     emitVerbsSearch(event.target.value)
   }
 
-  function handleSearchChange({ option }) {
-    setVerb(option.id);
+  function handleSearchChange({option}) {
     setFormData({});
     setErrors({});
     setSuccess({});
@@ -73,10 +72,10 @@ const Home = () => {
     router.push(`/conjugate?verb=${option.id}`);
   }
 
-  function emitConjugation(verb) {
+  function emitConjugation(query) {
     setIsConjugationLoading(true);
 
-    fetch(`/api/conjugation?q=${verb}`)
+    fetch(`/api/conjugation?q=${query}`)
       .then(r => r.json())
       .then((data) => {
         setIsConjugationLoading(false);
@@ -128,7 +127,7 @@ const Home = () => {
       <Search
         isOptionsLoading={isVerbsLoading}
         searchOptions={verbs.map(fromVerbToOption)}
-        searchValue={router.query.verb}
+        searchValue={verb}
         onSearchChange={handleSearchChange}
         onSearchInputChange={handleInputSearchChange}
       />
