@@ -33,7 +33,7 @@ const fromVerbToOption = verb => ({
 
 const Home = () => {
   const [verbs, setVerbs] = React.useState([]);
-  const [verb, setVerb] = React.useState('być');
+  const [verb, setVerb] = React.useState('');
   const [conjugation, setConjugation] = React.useState({});
   const [translate, setTranslate] = React.useState('');
   const [
@@ -43,15 +43,6 @@ const Home = () => {
   const [formData, setFormData] = React.useState({});
   const [errors, setErrors] = React.useState({});
   const [success, setSuccess] = React.useState({});
-
-  // React.useEffect(() => {
-  //   fetch('http://localhost:4000/')
-  //     .then(r => r.json())
-  //     .then((data: string[]) => {
-  //       console.log(data);
-  //       setVerbs(data);
-  //     });
-  // }, [verb]);
 
   function handleInputSearchChange(event) {
     fetch(`/api/search?q=${event.target.value}`)
@@ -70,7 +61,7 @@ const Home = () => {
     setErrors({});
     setSuccess({});
 
-    fetch(`http://localhost:4000/conjugation?q=${option.id}`)
+    fetch(`/api/conjugation?q=${option.id}`)
       .then(r => r.json())
       .then((data) => {
         setIsConjugationLoading(false);

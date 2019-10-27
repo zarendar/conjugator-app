@@ -8,9 +8,12 @@
   },
   "dependencies": {
     "baseui": "^9.11.0",
+    "cheerio": "^1.0.0-rc.3",
     "next": "latest",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "styletron-engine-atomic": "^1.4.3",
     "styletron-react": "^5.2.4",
     "unfetch": "^4.1.0"

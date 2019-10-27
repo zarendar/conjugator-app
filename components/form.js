@@ -33,7 +33,7 @@ export default function Form({
       ))}
       <Block display={'flex'} justifyContent={'flex-end'}>
         <Button isLoading={isSubmitting} onClick={onFormSubmit}>
-          Check
+          Sprawdź
         </Button>
       </Block>
     </div>
