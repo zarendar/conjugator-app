@@ -63,7 +63,8 @@ const Home = () => {
       });
   }
 
-  function handleSearchChange({option}) {
+  function handleSearchChange({ option }) {
+    setVerb(option.id);
     setIsConjugationLoading(true);
     setFormData({});
     setErrors({});
@@ -75,7 +76,6 @@ const Home = () => {
         setIsConjugationLoading(false);
         setConjugation(data.conjugation);
         setTranslate(data.translate);
-        setVerb(option.id);
       })
       .catch(() => {
         setIsConjugationLoading(false);
