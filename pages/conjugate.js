@@ -4,6 +4,7 @@ import {Block} from 'baseui/block';
 import {Spinner} from 'baseui/spinner';
 import {H5} from 'baseui/typography';
 import fetch from 'unfetch';
+import { useRouter } from 'next/router'
 
 import Search from '../components/search';
 import Form from '../components/form';
@@ -33,8 +34,10 @@ const fromVerbToOption = verb => ({
 });
 
 const Home = () => {
+  const router = useRouter();
+
   const [verbs, setVerbs] = React.useState([]);
-  const [verb, setVerb] = React.useState('');
+  const [verb, setVerb] = React.useState(router.query.verb || '');
   const [conjugation, setConjugation] = React.useState({});
   const [translate, setTranslate] = React.useState('');
   const [
@@ -49,28 +52,31 @@ const Home = () => {
   const [errors, setErrors] = React.useState({});
   const [success, setSuccess] = React.useState({});
 
-  function handleInputSearchChange(event) {
-    setIsVerbsLoadingLoading(true)
+  React.useEffect(() => {
+    if (router.query.verb) {
+      setVerb(router.query.verb)
+      emitVerbsSearch(router.query.verb)
+      emitConjugation(router.query.verb)
+    }
+  }, [router.query.verb])
 
-    fetch(`/api/search?q=${event.target.value}`)
-      .then(r => r.json())
-      .then((data) => {
-        setIsVerbsLoadingLoading(false)
-        setVerbs(data);
-      })
-      .catch(() => {
-        setIsVerbsLoadingLoading(false)
-      });
+  function handleInputSearchChange(event) {
+    emitVerbsSearch(event.target.value)
   }
 
   function handleSearchChange({ option }) {
     setVerb(option.id);
-    setIsConjugationLoading(true);
     setFormData({});
     setErrors({});
     setSuccess({});
 
-    fetch(`/api/conjugation?q=${option.id}`)
+    router.push(`/conjugate?verb=${option.id}`);
+  }
+
+  function emitConjugation(verb) {
+    setIsConjugationLoading(true);
+
+    fetch(`/api/conjugation?q=${verb}`)
       .then(r => r.json())
       .then((data) => {
         setIsConjugationLoading(false);
@@ -79,6 +85,20 @@ const Home = () => {
       })
       .catch(() => {
         setIsConjugationLoading(false);
+      });
+  }
+
+  function emitVerbsSearch(query) {
+    setIsVerbsLoadingLoading(true)
+
+    fetch(`/api/search?q=${query}`)
+      .then(r => r.json())
+      .then((data) => {
+        setIsVerbsLoadingLoading(false)
+        setVerbs(data);
+      })
+      .catch(() => {
+        setIsVerbsLoadingLoading(false)
       });
   }
 
@@ -108,7 +128,7 @@ const Home = () => {
       <Search
         isOptionsLoading={isVerbsLoading}
         searchOptions={verbs.map(fromVerbToOption)}
-        searchValue={verb}
+        searchValue={router.query.verb}
         onSearchChange={handleSearchChange}
         onSearchInputChange={handleInputSearchChange}
       />
