@@ -12,6 +12,7 @@
     "@types/cheerio": "^0.22.13",
     "baseui": "^9.11.0",
     "cheerio": "^1.0.0-rc.3",
+    "lodash.debounce": "^4.0.8",
     "next": "latest",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
