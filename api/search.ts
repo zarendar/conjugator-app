@@ -1,7 +1,7 @@
-// @flow
-const rp = require('request-promise')
+import { NowRequest, NowResponse } from '@now/node'
+import rp from 'request-promise';
 
-const createOptions = search => ({
+const createOptions = (search: string | string[]) => ({
 	method: 'POST',
 	uri: 'https://en.bab.la/ax/conjugation/getVerbs',
 	form: {
@@ -10,7 +10,7 @@ const createOptions = search => ({
 	},
 })
 
-module.exports = (req, res) => {
+module.exports = (req: NowRequest, res: NowResponse) => {
 	rp(createOptions(req.query.q))
 		.then(function(parsedBody) {
 			const array = JSON.parse(parsedBody)

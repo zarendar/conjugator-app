@@ -127,7 +127,7 @@ const Home = () => {
 			<Search
 				isOptionsLoading={isVerbsLoading}
 				searchOptions={verbs.map(fromVerbToOption)}
-				searchValue={verb}
+				searchValue={verb ? [{id: verb}] : null}
 				onSearchChange={handleSearchChange}
 				onSearchInputChange={handleInputSearchChange}
 			/>
