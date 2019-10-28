@@ -6,7 +6,7 @@ import {H5} from 'baseui/typography'
 import fetch from 'unfetch'
 import { useRouter } from 'next/router'
 
-import Search from '../components/search'
+import Layout from '../components/layout'
 import Form from '../components/form'
 
 function validate(fromData, conjugation) {
@@ -28,23 +28,12 @@ function validate(fromData, conjugation) {
 	}
 }
 
-const fromVerbToOption = verb => ({
-	id: verb,
-	label: verb,
-})
-
-const Home = () => {
+function Conjugate() {
 	const router = useRouter()
+	const { verb } = router.query
 
-
-	const {verb} = router.query
-	const [verbs, setVerbs] = React.useState([])
 	const [conjugation, setConjugation] = React.useState({})
 	const [translate, setTranslate] = React.useState('')
-	const [
-		isVerbsLoading,
-		setIsVerbsLoadingLoading,
-	] = React.useState(false)
 	const [
 		isConjugationLoading,
 		setIsConjugationLoading,
@@ -55,22 +44,15 @@ const Home = () => {
 
 	React.useEffect(() => {
 		if (verb) {
-			emitVerbsSearch(verb)
+			// emitVerbsSearch(verb)
+
+			setFormData({})
+			setErrors({})
+			setSuccess({})
+
 			emitConjugation(verb)
 		}
 	}, [verb])
-
-	function handleInputSearchChange(event) {
-		emitVerbsSearch(event.target.value)
-	}
-
-	function handleSearchChange({option}) {
-		setFormData({})
-		setErrors({})
-		setSuccess({})
-
-		router.push(`/conjugate?verb=${option.id}`)
-	}
 
 	function emitConjugation(query) {
 		setIsConjugationLoading(true)
@@ -84,20 +66,6 @@ const Home = () => {
 			})
 			.catch(() => {
 				setIsConjugationLoading(false)
-			})
-	}
-
-	function emitVerbsSearch(query) {
-		setIsVerbsLoadingLoading(true)
-
-		fetch(`/api/search?q=${query}`)
-			.then(r => r.json())
-			.then((data) => {
-				setIsVerbsLoadingLoading(false)
-				setVerbs(data)
-			})
-			.catch(() => {
-				setIsVerbsLoadingLoading(false)
 			})
 	}
 
@@ -123,38 +91,29 @@ const Home = () => {
 	}
 
 	return (
-		<Block padding={'scale300'}>
-			<Search
-				isOptionsLoading={isVerbsLoading}
-				searchOptions={verbs.map(fromVerbToOption)}
-				searchValue={verb ? [{id: verb}] : null}
-				onSearchChange={handleSearchChange}
-				onSearchInputChange={handleInputSearchChange}
-			/>
-			<Block paddingTop={'scale300'}>
-				{isConjugationLoading && <Spinner />}
-				{verb && !isConjugationLoading && (
-					<React.Fragment>
-						<H5 marginTop={'scale300'} marginBottom={'scale600'}>
-              Bezokolicznik: <strong>{verb}</strong> (
-							<Block as={'span'} color={'mono800'}>
-								{translate}
-							</Block>
-              )
-						</H5>
-						<Form
-							formData={formData}
-							errors={errors}
-							success={success}
-							isSubmitting={isConjugationLoading}
-							onFormChange={handleFormChange}
-							onFormSubmit={handleFormSubmit}
-						/>
-					</React.Fragment>
-				)}
-			</Block>
-		</Block>
+		<Layout>
+			{isConjugationLoading && <Spinner />}
+			{verb && !isConjugationLoading && (
+				<React.Fragment>
+					<H5 marginTop={'scale300'} marginBottom={'scale600'}>
+						Bezokolicznik: <strong>{verb}</strong> (
+						<Block as={'span'} color={'mono800'}>
+							{translate}
+						</Block>
+						)
+					</H5>
+					<Form
+						formData={formData}
+						errors={errors}
+						success={success}
+						isSubmitting={isConjugationLoading}
+						onFormChange={handleFormChange}
+						onFormSubmit={handleFormSubmit}
+					/>
+				</React.Fragment>
+			)}
+		</Layout>
 	)
 }
 
-export default Home
+export default Conjugate

@@ -1,13 +1,11 @@
 import React from 'react'
-import { LightTheme, BaseProvider } from 'baseui'
+import Layout from '../components/layout'
 
-import Home from './conjugate'
-
-const Index = () => {
+function Index() {
 	return (
-		<BaseProvider theme={LightTheme}>
-			<Home />
-		</BaseProvider>
+		<Layout>
+
+		</Layout>
 	)
 }
 
