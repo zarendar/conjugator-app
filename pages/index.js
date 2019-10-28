@@ -1,11 +1,14 @@
-import {LightTheme, BaseProvider} from 'baseui';
+import React from 'react'
+import { LightTheme, BaseProvider } from 'baseui'
 
 import Home from './conjugate'
 
-export default (props) => {
-  return (
-    <BaseProvider theme={LightTheme}>
-      <Home />
-    </BaseProvider>
-  )
+const Index = () => {
+	return (
+		<BaseProvider theme={LightTheme}>
+			<Home />
+		</BaseProvider>
+	)
 }
+
+export default Index
