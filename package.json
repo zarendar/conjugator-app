@@ -2,11 +2,12 @@
   "name": "conjugator-app",
   "version": "0.1.0",
   "scripts": {
+    "deploy": "now --prod",
     "dev": "next",
     "dev-server": "now dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "start": "next start"
   },
   "dependencies": {
     "@types/cheerio": "^0.22.13",
