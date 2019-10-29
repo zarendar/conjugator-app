@@ -2,8 +2,8 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import fetch from 'unfetch'
-import isEmpty from 'lodash.isempty';
-import uniq from 'lodash.uniq';
+import isEmpty from 'lodash.isempty'
+import uniq from 'lodash.uniq'
 
 import {Block} from 'baseui/block'
 import {Spinner} from 'baseui/spinner'
@@ -16,7 +16,7 @@ function validate(fromData, conjugation) {
 	const errors = {}
 	const success = {}
 
-	for (let i in conjugation) {
+	for (const i in conjugation) {
 		const currentInput = fromData[i] && fromData[i].toLowerCase()
 		if (currentInput !== conjugation[i]) {
 			errors[i] = conjugation[i]
@@ -44,7 +44,22 @@ function Conjugate() {
 	const [formData, setFormData] = React.useState({})
 	const [errors, setErrors] = React.useState({})
 	const [success, setSuccess] = React.useState({})
-	const [checked, setChecked] = React.useState([]);
+	const [checked, setChecked] = React.useState([])
+
+	function emitConjugation(query) {
+		setIsConjugationLoading(true)
+
+		fetch(`/api/conjugation?q=${query}`)
+			.then(r => r.json())
+			.then((data) => {
+				setIsConjugationLoading(false)
+				setConjugation(data.conjugation)
+				setTranslate(data.translate)
+			})
+			.catch(() => {
+				setIsConjugationLoading(false)
+			})
+	}
 
 	React.useEffect(() => {
 		setChecked(JSON.parse(localStorage.getItem('checked')) || [])
@@ -61,21 +76,6 @@ function Conjugate() {
 			emitConjugation(verb)
 		}
 	}, [verb])
-
-	function emitConjugation(query) {
-		setIsConjugationLoading(true)
-
-		fetch(`/api/conjugation?q=${query}`)
-			.then(r => r.json())
-			.then((data) => {
-				setIsConjugationLoading(false)
-				setConjugation(data.conjugation)
-				setTranslate(data.translate)
-			})
-			.catch(() => {
-				setIsConjugationLoading(false)
-			})
-	}
 
 	function handleFormChange(event) {
 		setFormData({
@@ -98,10 +98,10 @@ function Conjugate() {
 		setSuccess(result.success)
 
 		if (isEmpty(result.errors)) {
-			const updatedChecked = uniq([...checked, verb]);
+			const updatedChecked = uniq([...checked, verb])
 
 			setChecked(updatedChecked)
-			localStorage.setItem('checked', JSON.stringify(updatedChecked));
+			localStorage.setItem('checked', JSON.stringify(updatedChecked))
 		}
 	}
 

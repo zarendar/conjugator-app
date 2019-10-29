@@ -1,11 +1,11 @@
 import { NowRequest, NowResponse } from '@now/node'
 import rp from 'request-promise'
-import $ from 'cheerio';
+import $ from 'cheerio'
 
 
-module.exports = (req: NowRequest, res: NowResponse) => {
+module.exports = (req: NowRequest, res: NowResponse): void => {
 	rp(`https://www.babla.ru/${encodeURI('спряжения')}/${encodeURI('польский')}/${encodeURI(String(req.query.q))}`)
-		.then(function(html){
+		.then(function (html) {
 			const presentTimeBlock = $('#conjFull .conj-tense-block', html).first()
 			const translateItemElements = $('#conjTrans .quick-result-overview a', html)
 

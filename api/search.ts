@@ -1,5 +1,5 @@
 import { NowRequest, NowResponse } from '@now/node'
-import rp from 'request-promise';
+import rp from 'request-promise'
 
 const createOptions = (search: string | string[]) => ({
 	method: 'POST',
@@ -10,7 +10,7 @@ const createOptions = (search: string | string[]) => ({
 	},
 })
 
-module.exports = (req: NowRequest, res: NowResponse) => {
+module.exports = (req: NowRequest, res: NowResponse): void => {
 	rp(createOptions(req.query.q))
 		.then(function(parsedBody) {
 			const array = JSON.parse(parsedBody)

@@ -3,7 +3,11 @@ import Document, { Head, Main, NextScript } from 'next/document'
 import { Provider as StyletronProvider } from 'styletron-react'
 import { styletron } from '../styletron'
 
-class MyDocument extends Document {
+interface P {
+	stylesheets: {css: string; attrs: {media: string}}[];
+}
+
+class MyDocument extends Document<P> {
 	static getInitialProps (props) {
 		const page = props.renderPage(App => props => (
 			<StyletronProvider value={styletron}>

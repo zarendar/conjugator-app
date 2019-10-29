@@ -1,27 +1,27 @@
 import React from 'react'
 import Link from 'next/link'
 
-import { ListItem, ListItemLabel } from 'baseui/list';
+import { ListItem, ListItemLabel } from 'baseui/list'
 import { Spinner } from 'baseui/spinner'
 import { useStyletron } from 'baseui'
-import { StyledLink } from 'baseui/link';
-import { Check } from "baseui/icon";
-import { Label2 } from "baseui/typography";
-import { Block } from 'baseui/block';
+import { StyledLink } from 'baseui/link'
+import { Check } from 'baseui/icon'
+import { Label2 } from 'baseui/typography'
+import { Block } from 'baseui/block'
 
-import Layout from '../components/layout';
+import Layout from '../components/layout'
 
 function Index() {
-	const [useCss] = useStyletron();
-	const [list, setList] = React.useState([]);
-	const [isListLoading, setIsListLoading] = React.useState(false);
-	const [checked, setChecked] = React.useState([]);
+	const [useCss] = useStyletron()
+	const [list, setList] = React.useState([])
+	const [isListLoading, setIsListLoading] = React.useState(false)
+	const [checked, setChecked] = React.useState([])
 
 	React.useEffect(() => {
 		setIsListLoading(true)
 		setChecked(JSON.parse(localStorage.getItem('checked')) || [])
 
-		fetch(`/api/top`)
+		fetch('/api/top')
 			.then(r => r.json())
 			.then((data) => {
 				setIsListLoading(false)

@@ -5,8 +5,8 @@ import {H6} from 'baseui/typography'
 import {FormControl} from 'baseui/form-control'
 import {Input} from 'baseui/input'
 import { Button } from 'baseui/button'
-import { Card } from 'baseui/card';
-import { Check } from 'baseui/icon';
+import { Card } from 'baseui/card'
+import { Check } from 'baseui/icon'
 
 const inputs = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
 
