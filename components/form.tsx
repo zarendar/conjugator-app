@@ -25,6 +25,7 @@ export default function Form({
 			{inputs.map(input => (
 				<FormControl key={input} error={errors[input]} label={input}>
 					<Input
+						autoComplete={'off'}
 						disabled={isSubmitting}
 						name={input}
 						error={Boolean(errors[input])}
