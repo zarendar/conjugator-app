@@ -5,11 +5,13 @@ import {H6} from 'baseui/typography'
 import {FormControl} from 'baseui/form-control'
 import {Input} from 'baseui/input'
 import { Button } from 'baseui/button'
-import {Card, StyledBody} from 'baseui/card';
+import { Card } from 'baseui/card';
+import { Check } from 'baseui/icon';
 
 const inputs = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
 
 export default function Form({
+	checked,
 	formData,
 	errors,
 	success,
@@ -19,7 +21,7 @@ export default function Form({
 }) {
 	return (
 		<Card>
-			<H6 marginTop={0} marginBottom={'scale600'}>Czas teraźniejszy</H6>
+			<H6 display={'flex'} alignItems={'center'} marginTop={0} marginBottom={'scale600'}>Czas teraźniejszy {checked && <Check size={32}/>}</H6>
 			{inputs.map(input => (
 				<FormControl key={input} error={errors[input]} label={input}>
 					<Input

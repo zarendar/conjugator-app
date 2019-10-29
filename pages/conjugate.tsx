@@ -1,10 +1,13 @@
 // @flow
 import React from 'react'
+import { useRouter } from 'next/router'
+import fetch from 'unfetch'
+import isEmpty from 'lodash.isempty';
+import uniq from 'lodash.uniq';
+
 import {Block} from 'baseui/block'
 import {Spinner} from 'baseui/spinner'
-import {H5} from 'baseui/typography'
-import fetch from 'unfetch'
-import { useRouter } from 'next/router'
+import { H5 } from 'baseui/typography'
 
 import Layout from '../components/layout'
 import Form from '../components/form'
@@ -41,6 +44,11 @@ function Conjugate() {
 	const [formData, setFormData] = React.useState({})
 	const [errors, setErrors] = React.useState({})
 	const [success, setSuccess] = React.useState({})
+	const [checked, setChecked] = React.useState([]);
+
+	React.useEffect(() => {
+		setChecked(JSON.parse(localStorage.getItem('checked')) || [])
+	}, [])
 
 	React.useEffect(() => {
 		if (verb) {
@@ -88,6 +96,13 @@ function Conjugate() {
 		const result = validate(formData, conjugation)
 		setErrors(result.errors)
 		setSuccess(result.success)
+
+		if (isEmpty(result.errors)) {
+			const updatedChecked = uniq([...checked, verb]);
+
+			setChecked(updatedChecked)
+			localStorage.setItem('checked', JSON.stringify(updatedChecked));
+		}
 	}
 
 	return (
@@ -103,6 +118,7 @@ function Conjugate() {
 						)
 					</H5>
 					<Form
+						checked={checked.includes(verb)}
 						formData={formData}
 						errors={errors}
 						success={success}
