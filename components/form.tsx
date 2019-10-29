@@ -4,7 +4,8 @@ import {Block} from 'baseui/block'
 import {H6} from 'baseui/typography'
 import {FormControl} from 'baseui/form-control'
 import {Input} from 'baseui/input'
-import {Button} from 'baseui/button'
+import { Button } from 'baseui/button'
+import {Card, StyledBody} from 'baseui/card';
 
 const inputs = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
 
@@ -17,8 +18,8 @@ export default function Form({
 	onFormSubmit,
 }) {
 	return (
-		<div>
-			<H6 marginTop={'scale300'} marginBottom={'scale300'}>Czas teraźniejszy</H6>
+		<Card>
+			<H6 marginTop={0} marginBottom={'scale600'}>Czas teraźniejszy</H6>
 			{inputs.map(input => (
 				<FormControl key={input} error={errors[input]} label={input}>
 					<Input
@@ -36,6 +37,6 @@ export default function Form({
           Sprawdź
 				</Button>
 			</Block>
-		</div>
+		</Card>
 	)
 }

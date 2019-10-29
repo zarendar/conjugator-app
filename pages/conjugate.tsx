@@ -95,7 +95,7 @@ function Conjugate() {
 			{isConjugationLoading && <Spinner />}
 			{verb && !isConjugationLoading && (
 				<React.Fragment>
-					<H5 marginTop={'scale300'} marginBottom={'scale600'}>
+					<H5 marginTop={'scale600'} marginBottom={'scale800'}>
 						Bezokolicznik: <strong>{verb}</strong> (
 						<Block as={'span'} color={'mono800'}>
 							{translate}
