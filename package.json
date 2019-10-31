@@ -2,8 +2,7 @@
   "name": "conjugator-app",
   "version": "0.1.0",
   "scripts": {
-    "deploy": "now --prod",
-    "dev": "next",
+    "dev": "now --prod",
     "dev-server": "now dev",
     "build": "next build",
     "lint": "eslint --ext .ts --ext .tsx .",
@@ -33,7 +32,7 @@
     "@typescript-eslint/parser": "^2.6.0",
     "eslint": "^6.6.0",
     "eslint-plugin-react": "^7.16.0",
-    "now": "^16.4.3",
+    "now": "^16.4.4",
     "typescript": "^3.6.4"
   }
 }
