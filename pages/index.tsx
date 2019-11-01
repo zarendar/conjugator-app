@@ -21,11 +21,11 @@ function Index() {
 		setIsListLoading(true)
 		setChecked(JSON.parse(localStorage.getItem('checked')) || [])
 
-		fetch('/api/top')
+		fetch('/api/verbs')
 			.then(r => r.json())
-			.then((data) => {
+			.then(({verbs}) => {
 				setIsListLoading(false)
-				setList(data)
+				setList(verbs)
 			})
 			.catch((e) => {
 				setIsListLoading(false)
@@ -49,10 +49,10 @@ function Index() {
 					</Block>
 				)}
 				{isListLoading ? <Spinner/> : list.map(item => (
-					<Link key={item} href={`/conjugate?verb=${item}`}>
-						<StyledLink href={`/conjugate?verb=${item}`}>
-							<ListItem endEnhancer={() => checked.includes(item) ? <Check size={24} /> : null}>
-								<ListItemLabel>{item}</ListItemLabel>
+					<Link key={item._id} href={`/conjugate?verb=${item.word}`}>
+						<StyledLink href={`/conjugate?verb=${item.word}`}>
+							<ListItem endEnhancer={() => checked.includes(item.word) ? <Check size={24} /> : null}>
+								<ListItemLabel>{item.word}</ListItemLabel>
 							</ListItem>
 						</StyledLink>
 					</Link>
