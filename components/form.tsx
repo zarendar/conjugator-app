@@ -8,20 +8,41 @@ import { Button } from 'baseui/button'
 import { Card } from 'baseui/card'
 import { Check } from 'baseui/icon'
 
-const inputs = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
+interface Props {
+	title: string;
+	inputs: string[];
+	formData: Record<string, string>;
+	errors: Record<string, string>;
+	isSubmitting: boolean;
+	submitButtonText: string;
+	onFormChange: any;
+	onFormSubmit: any;
+
+	checked?: boolean;
+	success: Record<string, boolean>;
+}
 
 export default function Form({
+	title,
+	inputs,
 	checked,
 	formData,
 	errors,
 	success,
 	isSubmitting,
+	submitButtonText,
 	onFormChange,
 	onFormSubmit,
-}) {
+}: Props): JSX.Element{
 	return (
 		<Card>
-			<H6 display={'flex'} alignItems={'center'} marginTop={0} marginBottom={'scale600'}>Czas teraźniejszy {checked && <Check size={32}/>}</H6>
+			<H6
+				display={'flex'}
+				alignItems={'center'}
+				marginTop={0}
+				marginBottom={'scale600'}>
+				{title} {checked && <Check size={32} />}
+			</H6>
 			{inputs.map(input => (
 				<FormControl key={input} error={errors[input]} label={input}>
 					<Input
@@ -37,7 +58,7 @@ export default function Form({
 			))}
 			<Block display={'flex'} justifyContent={'flex-end'}>
 				<Button isLoading={isSubmitting} onClick={onFormSubmit}>
-          Sprawdź
+					{submitButtonText}
 				</Button>
 			</Block>
 		</Card>

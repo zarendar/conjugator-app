@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import fetch from 'isomorphic-unfetch'
 
 import { ListItem, ListItemLabel } from 'baseui/list'
 import { Spinner } from 'baseui/spinner'
@@ -9,9 +10,10 @@ import { Check } from 'baseui/icon'
 import { Label2 } from 'baseui/typography'
 import { Block } from 'baseui/block'
 
-import Layout from '../components/layout'
+import { withAuth } from '../utils/auth'
+import {withLayout} from '../utils/layout'
 
-function Index() {
+function Index(): JSX.Element {
 	const [useCss] = useStyletron()
 	const [list, setList] = React.useState([])
 	const [isListLoading, setIsListLoading] = React.useState(false)
@@ -34,7 +36,7 @@ function Index() {
 	}, [])
 
 	return (
-		<Layout>
+		<>
 			<ul
 				className={useCss({
 					paddingLeft: 0,
@@ -58,8 +60,8 @@ function Index() {
 					</Link>
 				))}
 			</ul>
-		</Layout>
+		</>
 	)
 }
 
-export default Index
+export default withAuth(withLayout(Index))

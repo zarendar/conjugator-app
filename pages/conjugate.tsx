@@ -9,8 +9,12 @@ import {Block} from 'baseui/block'
 import {Spinner} from 'baseui/spinner'
 import { H5 } from 'baseui/typography'
 
-import Layout from '../components/layout'
 import Form from '../components/form'
+
+import {withLayout} from '../utils/layout'
+import {withAuth} from '../utils/auth'
+
+const inputs = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
 
 function validate(fromData, conjugation) {
 	const errors = {}
@@ -31,7 +35,7 @@ function validate(fromData, conjugation) {
 	}
 }
 
-function Conjugate() {
+function Conjugate(): JSX.Element {
 	const router = useRouter()
 	const { verb } = router.query
 
@@ -106,7 +110,7 @@ function Conjugate() {
 	}
 
 	return (
-		<Layout>
+		<>
 			{isConjugationLoading && <Spinner />}
 			{verb && !isConjugationLoading && (
 				<React.Fragment>
@@ -118,18 +122,21 @@ function Conjugate() {
 						)
 					</H5>
 					<Form
+						title={'Czas teraźniejszy'}
+						inputs={inputs}
 						checked={checked.includes(verb)}
 						formData={formData}
 						errors={errors}
 						success={success}
 						isSubmitting={isConjugationLoading}
+						submitButtonText={'Sprawdź'}
 						onFormChange={handleFormChange}
 						onFormSubmit={handleFormSubmit}
 					/>
 				</React.Fragment>
 			)}
-		</Layout>
+		</>
 	)
 }
 
-export default Conjugate
+export default withAuth(withLayout(Conjugate))
