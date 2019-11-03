@@ -11,17 +11,27 @@ import { Label2 } from 'baseui/typography'
 import { Block } from 'baseui/block'
 
 import { withAuth } from '../utils/auth'
-import {withLayout} from '../utils/layout'
+import { withLayout } from '../utils/layout'
 
-function Index(): JSX.Element {
+interface Progress {
+	present?: string[];
+}
+
+interface Props {
+	progress: Progress;
+}
+
+function Index({progress = {}}: Props): JSX.Element {
 	const [useCss] = useStyletron()
 	const [list, setList] = React.useState([])
 	const [isListLoading, setIsListLoading] = React.useState(false)
-	const [checked, setChecked] = React.useState([])
+	// const [checked, setChecked] = React.useState([])
+
+	const checked = progress.present || []
 
 	React.useEffect(() => {
 		setIsListLoading(true)
-		setChecked(JSON.parse(localStorage.getItem('checked')) || [])
+		// setChecked(JSON.parse(localStorage.getItem('checked')) || [])
 
 		fetch('/api/verbs')
 			.then(r => r.json())

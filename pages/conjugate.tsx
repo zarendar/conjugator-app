@@ -12,7 +12,15 @@ import { H5 } from 'baseui/typography'
 import Form from '../components/form'
 
 import {withLayout} from '../utils/layout'
-import {withAuth} from '../utils/auth'
+import { withAuth } from '../utils/auth'
+
+interface Progress {
+	present?: string[];
+}
+
+interface Props {
+	progress: Progress;
+}
 
 const inputs = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
 
@@ -35,7 +43,7 @@ function validate(fromData, conjugation) {
 	}
 }
 
-function Conjugate(): JSX.Element {
+function Conjugate({ progress = {} }: Props): JSX.Element {
 	const router = useRouter()
 	const { verb } = router.query
 
@@ -48,7 +56,7 @@ function Conjugate(): JSX.Element {
 	const [formData, setFormData] = React.useState({})
 	const [errors, setErrors] = React.useState({})
 	const [success, setSuccess] = React.useState({})
-	const [checked, setChecked] = React.useState([])
+	const [checked, setChecked] = React.useState<any>(progress.present || [])
 
 	function emitConjugation(query) {
 		setIsConjugationLoading(true)
@@ -64,10 +72,6 @@ function Conjugate(): JSX.Element {
 				setIsConjugationLoading(false)
 			})
 	}
-
-	React.useEffect(() => {
-		setChecked(JSON.parse(localStorage.getItem('checked')) || [])
-	}, [])
 
 	React.useEffect(() => {
 		if (verb) {
@@ -105,7 +109,13 @@ function Conjugate(): JSX.Element {
 			const updatedChecked = uniq([...checked, verb])
 
 			setChecked(updatedChecked)
-			localStorage.setItem('checked', JSON.stringify(updatedChecked))
+			fetch('/api/update-progress', {
+				method: 'PUT',
+				body: JSON.stringify(updatedChecked),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
 		}
 	}
 
