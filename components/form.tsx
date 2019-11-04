@@ -35,32 +35,34 @@ export default function Form({
 	onFormSubmit,
 }: Props): JSX.Element{
 	return (
-		<Card>
-			<H6
-				display={'flex'}
-				alignItems={'center'}
-				marginTop={0}
-				marginBottom={'scale600'}>
-				{title} {checked && <Check size={32} />}
-			</H6>
-			{inputs.map(input => (
-				<FormControl key={input} error={errors[input]} label={input}>
-					<Input
-						autoComplete={'off'}
-						disabled={isSubmitting}
-						name={input}
-						error={Boolean(errors[input])}
-						positive={success[input]}
-						value={formData[input]}
-						onChange={onFormChange}
-					/>
-				</FormControl>
-			))}
-			<Block display={'flex'} justifyContent={'flex-end'}>
-				<Button isLoading={isSubmitting} onClick={onFormSubmit}>
-					{submitButtonText}
-				</Button>
-			</Block>
-		</Card>
+		<Block marginBottom={'scale800'}>
+			<Card>
+				<H6
+					display={'flex'}
+					alignItems={'center'}
+					marginTop={0}
+					marginBottom={'scale600'}>
+					{title} {checked && <Check size={32} />}
+				</H6>
+				{inputs.map(input => (
+					<FormControl key={input} error={errors[input]} label={input}>
+						<Input
+							autoComplete={'off'}
+							disabled={isSubmitting}
+							name={input}
+							error={Boolean(errors[input])}
+							positive={success[input]}
+							value={formData[input]}
+							onChange={onFormChange}
+						/>
+					</FormControl>
+				))}
+				<Block display={'flex'} justifyContent={'flex-end'}>
+					<Button isLoading={isSubmitting} onClick={onFormSubmit}>
+						{submitButtonText}
+					</Button>
+				</Block>
+			</Card>
+		</Block>
 	)
 }

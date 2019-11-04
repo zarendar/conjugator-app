@@ -18,6 +18,7 @@ import { withRedux } from '../utils/redux'
 import { withAuth } from '../utils/auth'
 
 const inputs = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
+const inputsPast = ['ja (m)', 'ja (f)', 'ty (m)', 'ty (f)', 'on', 'ona', 'ono', 'my (m)', 'my (f)', 'wy (m)', 'wy (f)', 'oni', 'one']
 
 function validate(fromData, conjugation) {
 	const errors = {}
@@ -45,14 +46,19 @@ function Conjugate(): JSX.Element {
 	const progress = useSelector(state => state.progress)
 	const dispatch = useDispatch()
 
-	const [conjugation, setConjugation] = React.useState({})
 	const [translate, setTranslate] = React.useState('')
+	const [conjugationPresent, setConjugationPresent] = React.useState({})
+	const [conjugationPast, setConjugationPast] = React.useState({})
 	const [isConjugationLoading, setIsConjugationLoading] = React.useState(false)
 	const [isProgressUpdatingLoading,setProgressUpdatingLoading] = React.useState(false)
 	const [formData, setFormData] = React.useState({})
+	const [formDataPast, setFormDataPast] = React.useState({})
 	const [errors, setErrors] = React.useState({})
+	const [errorsPast, setErrorsPast] = React.useState({})
 	const [success, setSuccess] = React.useState({})
+	const [successPast, setSuccessPast] = React.useState({})
 	const [checked, setChecked] = React.useState<any>(progress.present || [])
+	const [checkedPast, setCheckedPast] = React.useState<any>(progress.past || [])
 
 	function emitConjugation(query) {
 		setIsConjugationLoading(true)
@@ -60,9 +66,10 @@ function Conjugate(): JSX.Element {
 		fetch(`/api/conjugation?q=${query}`)
 			.then(r => r.json())
 			.then((data) => {
-				setIsConjugationLoading(false)
-				setConjugation(data.conjugation)
 				setTranslate(data.translate)
+				setIsConjugationLoading(false)
+				setConjugationPresent(data.conjugationPresent)
+				setConjugationPast(data.conjugationPast)
 			})
 			.catch(() => {
 				setIsConjugationLoading(false)
@@ -71,11 +78,12 @@ function Conjugate(): JSX.Element {
 
 	React.useEffect(() => {
 		if (verb) {
-			// emitVerbsSearch(verb)
-
 			setFormData({})
+			setFormDataPast({})
 			setErrors({})
+			setErrorsPast({})
 			setSuccess({})
+			setSuccessPast({})
 
 			emitConjugation(verb)
 		}
@@ -96,9 +104,25 @@ function Conjugate(): JSX.Element {
 		})
 	}
 
+	function handleFormPastChange(event) {
+		setFormDataPast({
+			...formDataPast,
+			[event.target.name]: event.target.value,
+		})
+		setErrorsPast({
+			...errors,
+			[event.target.name]: null,
+		})
+		setSuccessPast({
+			...errors,
+			[event.target.name]: null,
+		})
+	}
+
 	async function handleFormSubmit() {
-		const result = validate(formData, conjugation)
+		const result = validate(formData, conjugationPresent)
 		setErrors(result.errors)
+		setSuccess(result.success)
 
 		if (isEmpty(result.errors)) {
 			const updatedChecked = uniq([...checked, verb])
@@ -115,7 +139,6 @@ function Conjugate(): JSX.Element {
 				})
 
 				setChecked(updatedChecked)
-				setSuccess(result.success)
 				setProgressUpdatingLoading(false)
 
 				dispatch({
@@ -123,6 +146,41 @@ function Conjugate(): JSX.Element {
 					payload: {
 						...progress,
 						present: updatedChecked
+					}
+				})
+			} catch (error) {
+				setProgressUpdatingLoading(false)
+			}
+		}
+	}
+
+	async function handleFormPastSubmit() {
+		const result = validate(formDataPast, conjugationPast)
+		setErrorsPast(result.errors)
+		setSuccessPast(result.success)
+
+		if (isEmpty(result.errors)) {
+			const updatedChecked = uniq([...checkedPast, verb])
+
+			setProgressUpdatingLoading(true)
+
+			try {
+				await fetch('/api/update-progress', {
+					method: 'PUT',
+					body: JSON.stringify(updatedChecked),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				})
+
+				setCheckedPast(updatedChecked)
+				setProgressUpdatingLoading(false)
+
+				dispatch({
+					type: 'UPDATE_PROGRESS',
+					payload: {
+						...progress,
+						past: updatedChecked
 					}
 				})
 			} catch (error) {
@@ -154,6 +212,18 @@ function Conjugate(): JSX.Element {
 						submitButtonText={'Sprawdź'}
 						onFormChange={handleFormChange}
 						onFormSubmit={handleFormSubmit}
+					/>
+					<Form
+						title={'Czas przeszły'}
+						inputs={inputsPast}
+						checked={checkedPast.includes(verb)}
+						formData={formDataPast}
+						errors={errorsPast}
+						success={successPast}
+						isSubmitting={isConjugationLoading || isProgressUpdatingLoading}
+						submitButtonText={'Sprawdź'}
+						onFormChange={handleFormPastChange}
+						onFormSubmit={handleFormPastSubmit}
 					/>
 				</React.Fragment>
 			)}

@@ -27,6 +27,12 @@ function Index(): JSX.Element {
 	const user = useSelector(state => state.user)
 
 	const present = progress.present || []
+	const past = progress.past || []
+	const isPresentPassed = word => present.includes(word)
+	const isPastPassed = word => past.includes(word)
+	const isPassed = verb => isPresentPassed(verb.word) && isPastPassed(verb.word)
+	const checked = verbs.filter(isPassed)
+
 	const currentPage = query.page || 1
 
 	const pageChange = ({nextPage}) => {
@@ -37,7 +43,7 @@ function Index(): JSX.Element {
 		<>
 			{!isEmpty(user) && <Block display={'flex'} justifyContent={'flex-end'} alignItems={'center'}>
 				<Check size={32}/>
-				<Label2 marginTop={0} marginBottom={0}>{present.length}/{verbsCount}</Label2>
+				<Label2 marginTop={0} marginBottom={0}>{checked.length}/{verbsCount}</Label2>
 			</Block>}
 			<Block
 				as={'ul'}
@@ -48,7 +54,7 @@ function Index(): JSX.Element {
 				{verbs.map(verb => (
 					<Link key={verb._id} href={`/conjugate?verb=${verb.word}`}>
 						<StyledLink href={`/conjugate?verb=${verb.word}`}>
-							<ListItem endEnhancer={() => present.includes(verb.word) ? <Check size={24} /> : null}>
+							<ListItem endEnhancer={() => isPresentPassed(verb.word) || isPastPassed(verb.word) ? <Check color={isPastPassed(verb.word) ? 'black' : '#d8d8d8'} size={24} /> : null}>
 								<ListItemLabel>{verb.word}</ListItemLabel>
 							</ListItem>
 						</StyledLink>
