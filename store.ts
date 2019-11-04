@@ -3,7 +3,8 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 
 export const initialState = {
 	progress: {},
-	verbs: []
+	verbs: [],
+	user: {},
 }
 
 const reducer = (state = initialState, action) => {
@@ -17,6 +18,16 @@ const reducer = (state = initialState, action) => {
 		return {
 			...state,
 			progress: action.payload
+		}
+	case 'LOGIN':
+		return {
+			...state,
+			user: action.payload
+		}
+	case 'LOGOUT':
+		return {
+			...state,
+			user: {}
 		}
 	case 'UPDATE_PROGRESS':
 		return {

@@ -1,42 +1,36 @@
 import React from 'react'
 import nextCookie from 'next-cookies'
-import cookie from 'js-cookie'
 import isEmpty from 'lodash.isempty'
 
 import getHost from '../utils/get-host'
 
 export const withAuth = (WrappedComponent: any) => {
-	const Wrapper = ({user, ...rest}) => {
-		const [isAuthorized, setIsAuthorized] = React.useState(!isEmpty(user))
-
-		function handleLogout(): void {
-			cookie.remove('token')
-			setIsAuthorized(false)
-		}
-
-		return <WrappedComponent
-			isAuthorized={isAuthorized}
-			username={user ? user.username : null}
-			logout={handleLogout}
-			{...rest}
-		/>
+	const Wrapper = (props) => {
+		return <WrappedComponent{...props} />
 	}
 
 	Wrapper.getInitialProps = async ctx => {
-		const componentProps =
-      WrappedComponent.getInitialProps &&
-			(await WrappedComponent.getInitialProps(ctx))
-
+		const { reduxStore } = ctx
+		const state = reduxStore.getState()
 		const { token } = nextCookie(ctx)
 
-		const loginResponse = await fetch(`${getHost(ctx.req)}/api/login?username=${token}`)
+		const componentProps =
+		WrappedComponent.getInitialProps &&
+		(await WrappedComponent.getInitialProps(ctx))
 
-		const { user } = await loginResponse.json()
+		if (isEmpty(state.user) && token) {
+			const loginResponse = await fetch(`${getHost(ctx.req)}/api/login?username=${token}`)
+			const { user } = await loginResponse.json()
+
+			reduxStore.dispatch({
+				type: 'LOGIN',
+				payload: user
+			})
+		}
 
 
 		return {
 			...componentProps,
-			user,
 		}
 	}
 

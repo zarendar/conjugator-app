@@ -76,4 +76,4 @@ Index.getInitialProps = async (ctx) => {
 	return {}
 }
 
-export default compose(withAuth, withRedux, withLayout)(Index)
+export default compose(withRedux, withAuth, withLayout)(Index)

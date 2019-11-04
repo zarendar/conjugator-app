@@ -161,4 +161,4 @@ function Conjugate(): JSX.Element {
 	)
 }
 
-export default compose(withAuth, withRedux, withLayout)(Conjugate)
+export default compose(withRedux, withAuth, withLayout)(Conjugate)
