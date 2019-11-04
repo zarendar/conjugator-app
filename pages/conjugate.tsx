@@ -47,10 +47,8 @@ function Conjugate(): JSX.Element {
 
 	const [conjugation, setConjugation] = React.useState({})
 	const [translate, setTranslate] = React.useState('')
-	const [
-		isConjugationLoading,
-		setIsConjugationLoading,
-	] = React.useState(false)
+	const [isConjugationLoading, setIsConjugationLoading] = React.useState(false)
+	const [isProgressUpdatingLoading,setProgressUpdatingLoading] = React.useState(false)
 	const [formData, setFormData] = React.useState({})
 	const [errors, setErrors] = React.useState({})
 	const [success, setSuccess] = React.useState({})
@@ -101,27 +99,35 @@ function Conjugate(): JSX.Element {
 	async function handleFormSubmit() {
 		const result = validate(formData, conjugation)
 		setErrors(result.errors)
-		setSuccess(result.success)
 
 		if (isEmpty(result.errors)) {
 			const updatedChecked = uniq([...checked, verb])
 
-			await fetch('/api/update-progress', {
-				method: 'PUT',
-				body: JSON.stringify(updatedChecked),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+			setProgressUpdatingLoading(true)
 
-			setChecked(updatedChecked)
-			dispatch({
-				type: 'UPDATE_PROGRESS',
-				payload: {
-					...progress,
-					present: updatedChecked
-				}
-			})
+			try {
+				await fetch('/api/update-progress', {
+					method: 'PUT',
+					body: JSON.stringify(updatedChecked),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				})
+
+				setChecked(updatedChecked)
+				setSuccess(result.success)
+				setProgressUpdatingLoading(false)
+
+				dispatch({
+					type: 'UPDATE_PROGRESS',
+					payload: {
+						...progress,
+						present: updatedChecked
+					}
+				})
+			} catch (error) {
+				setProgressUpdatingLoading(false)
+			}
 		}
 	}
 
@@ -144,7 +150,7 @@ function Conjugate(): JSX.Element {
 						formData={formData}
 						errors={errors}
 						success={success}
-						isSubmitting={isConjugationLoading}
+						isSubmitting={isConjugationLoading || isProgressUpdatingLoading}
 						submitButtonText={'Sprawdź'}
 						onFormChange={handleFormChange}
 						onFormSubmit={handleFormSubmit}
