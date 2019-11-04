@@ -4,6 +4,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 export const initialState = {
 	progress: {},
 	verbs: [],
+	verbsCount: 0,
 	user: {},
 }
 
@@ -13,6 +14,11 @@ const reducer = (state = initialState, action) => {
 		return {
 			...state,
 			verbs: action.payload
+		}
+	case 'GET_VERBS_COUNT':
+		return {
+			...state,
+			verbsCount: action.payload
 		}
 	case 'GET_PROGRESS':
 		return {
