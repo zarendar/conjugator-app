@@ -51,6 +51,7 @@ function Index(): JSX.Element {
 
 Index.getInitialProps = async (ctx) => {
 	const { reduxStore, req } = ctx
+	const { token } = nextCookie(ctx)
 
 	if (isEmpty(reduxStore.getState().verbs)) {
 		const getVerbsResponse = await fetch(`${getHost(req)}/api/verbs`)
@@ -62,8 +63,7 @@ Index.getInitialProps = async (ctx) => {
 		})
 	}
 
-	if (isEmpty(reduxStore.getState().progress)) {
-		const { token } = nextCookie(ctx)
+	if (isEmpty(reduxStore.getState().progress) && token) {
 		const progressResponse = await fetch(`${getHost(req)}/api/progress?username=${token}`)
 		const {progress} = await progressResponse.json()
 
