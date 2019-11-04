@@ -20,6 +20,7 @@ import { withLayout } from '../utils/layout'
 function Index(): JSX.Element {
 	const verbs = useSelector(state => state.verbs)
 	const progress = useSelector(state => state.progress)
+	const user = useSelector(state => state.user)
 
 	const present = progress.present || []
 
@@ -31,10 +32,10 @@ function Index(): JSX.Element {
 				paddingRight={0}
 				marginTop={0}
 			>
-				<Block display={'flex'} justifyContent={'flex-end'} alignItems={'center'}>
+				{!isEmpty(user) && <Block display={'flex'} justifyContent={'flex-end'} alignItems={'center'}>
 					<Check size={32}/>
 					<Label2 marginTop={0} marginBottom={0}>{present.length}/{verbs.length}</Label2>
-				</Block>
+				</Block>}
 				{verbs.map(verb => (
 					<Link key={verb._id} href={`/conjugate?verb=${verb.word}`}>
 						<StyledLink href={`/conjugate?verb=${verb.word}`}>
