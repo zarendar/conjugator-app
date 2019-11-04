@@ -14,5 +14,16 @@ export const withLayout = (WrappedComponent: any) => {
 		)
 	}
 
+
+	Wrapper.getInitialProps = async ctx => {
+		const componentProps =
+      WrappedComponent.getInitialProps &&
+			(await WrappedComponent.getInitialProps(ctx))
+
+		return {
+			...componentProps,
+		}
+	}
+
 	return Wrapper
 }

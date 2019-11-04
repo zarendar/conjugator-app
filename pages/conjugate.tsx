@@ -1,5 +1,7 @@
 // @flow
 import React from 'react'
+import {compose} from 'redux'
+import {useSelector, useDispatch} from 'react-redux'
 import { useRouter } from 'next/router'
 import fetch from 'unfetch'
 import isEmpty from 'lodash.isempty'
@@ -11,16 +13,9 @@ import { H5 } from 'baseui/typography'
 
 import Form from '../components/form'
 
-import {withLayout} from '../utils/layout'
+import { withLayout } from '../utils/layout'
+import { withRedux } from '../utils/redux'
 import { withAuth } from '../utils/auth'
-
-interface Progress {
-	present?: string[];
-}
-
-interface Props {
-	progress: Progress;
-}
 
 const inputs = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
 
@@ -43,9 +38,12 @@ function validate(fromData, conjugation) {
 	}
 }
 
-function Conjugate({ progress = {} }: Props): JSX.Element {
+function Conjugate(): JSX.Element {
 	const router = useRouter()
 	const { verb } = router.query
+
+	const progress = useSelector(state => state.progress)
+	const dispatch = useDispatch()
 
 	const [conjugation, setConjugation] = React.useState({})
 	const [translate, setTranslate] = React.useState('')
@@ -100,7 +98,7 @@ function Conjugate({ progress = {} }: Props): JSX.Element {
 		})
 	}
 
-	function handleFormSubmit() {
+	async function handleFormSubmit() {
 		const result = validate(formData, conjugation)
 		setErrors(result.errors)
 		setSuccess(result.success)
@@ -108,12 +106,20 @@ function Conjugate({ progress = {} }: Props): JSX.Element {
 		if (isEmpty(result.errors)) {
 			const updatedChecked = uniq([...checked, verb])
 
-			setChecked(updatedChecked)
-			fetch('/api/update-progress', {
+			await fetch('/api/update-progress', {
 				method: 'PUT',
 				body: JSON.stringify(updatedChecked),
 				headers: {
 					'Content-Type': 'application/json'
+				}
+			})
+
+			setChecked(updatedChecked)
+			dispatch({
+				type: 'UPDATE_PROGRESS',
+				payload: {
+					...progress,
+					present: updatedChecked
 				}
 			})
 		}
@@ -149,4 +155,4 @@ function Conjugate({ progress = {} }: Props): JSX.Element {
 	)
 }
 
-export default withAuth(withLayout(Conjugate))
+export default compose(withAuth, withRedux, withLayout)(Conjugate)

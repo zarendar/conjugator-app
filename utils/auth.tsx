@@ -30,15 +30,13 @@ export const withAuth = (WrappedComponent: any) => {
 		const { token } = nextCookie(ctx)
 
 		const loginResponse = await fetch(`${getHost(ctx.req)}/api/login?username=${token}`)
-		const progressResponse = await fetch(`${getHost(ctx.req)}/api/progress?username=${token}`)
 
 		const { user } = await loginResponse.json()
-		const {progress} = await progressResponse.json()
+
 
 		return {
 			...componentProps,
 			user,
-			progress
 		}
 	}
 
