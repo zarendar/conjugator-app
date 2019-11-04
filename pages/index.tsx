@@ -30,8 +30,6 @@ function Index(): JSX.Element {
 	const past = progress.past || []
 	const isPresentPassed = word => present.includes(word)
 	const isPastPassed = word => past.includes(word)
-	const isPassed = verb => isPresentPassed(verb.word) && isPastPassed(verb.word)
-	const checked = verbs.filter(isPassed)
 
 	const currentPage = query.page || 1
 
@@ -43,7 +41,7 @@ function Index(): JSX.Element {
 		<>
 			{!isEmpty(user) && <Block display={'flex'} justifyContent={'flex-end'} alignItems={'center'}>
 				<Check size={32}/>
-				<Label2 marginTop={0} marginBottom={0}>{checked.length}/{verbsCount}</Label2>
+				<Label2 marginTop={0} marginBottom={0}>{past.length}/{verbsCount}</Label2>
 			</Block>}
 			<Block
 				as={'ul'}

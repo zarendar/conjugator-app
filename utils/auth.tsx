@@ -28,6 +28,16 @@ export const withAuth = (WrappedComponent: any) => {
 			})
 		}
 
+		if (isEmpty(reduxStore.getState().progress) && token) {
+			const progressResponse = await fetch(`${getHost(ctx.req)}/api/progress?username=${token}`)
+			const {progress} = await progressResponse.json()
+
+			reduxStore.dispatch({
+				type: 'GET_PROGRESS',
+				payload: progress
+			})
+		}
+
 
 		return {
 			...componentProps,

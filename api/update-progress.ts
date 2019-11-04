@@ -7,7 +7,7 @@ module.exports = async (req: NowRequest, res: NowResponse): Promise<void> => {
 		const collection = await db.collection('progress')
 		await collection.findOneAndUpdate(
 			{ username: req.cookies.token },
-			{$set: {present: req.body}},
+			{$set: req.body},
 		)
 
 		res.status(200).json({ status: 'ok' })

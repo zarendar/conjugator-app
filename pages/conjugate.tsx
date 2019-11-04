@@ -99,7 +99,7 @@ function Conjugate(): JSX.Element {
 			[event.target.name]: null,
 		})
 		setSuccess({
-			...errors,
+			...success,
 			[event.target.name]: null,
 		})
 	}
@@ -110,7 +110,7 @@ function Conjugate(): JSX.Element {
 			[event.target.name]: event.target.value,
 		})
 		setErrorsPast({
-			...errors,
+			...success,
 			[event.target.name]: null,
 		})
 		setSuccessPast({
@@ -132,7 +132,7 @@ function Conjugate(): JSX.Element {
 			try {
 				await fetch('/api/update-progress', {
 					method: 'PUT',
-					body: JSON.stringify(updatedChecked),
+					body: JSON.stringify({present: updatedChecked}),
 					headers: {
 						'Content-Type': 'application/json'
 					}
@@ -167,7 +167,7 @@ function Conjugate(): JSX.Element {
 			try {
 				await fetch('/api/update-progress', {
 					method: 'PUT',
-					body: JSON.stringify(updatedChecked),
+					body: JSON.stringify({past: updatedChecked}),
 					headers: {
 						'Content-Type': 'application/json'
 					}
@@ -213,22 +213,28 @@ function Conjugate(): JSX.Element {
 						onFormChange={handleFormChange}
 						onFormSubmit={handleFormSubmit}
 					/>
-					<Form
-						title={'Czas przeszły'}
-						inputs={inputsPast}
-						checked={checkedPast.includes(verb)}
-						formData={formDataPast}
-						errors={errorsPast}
-						success={successPast}
-						isSubmitting={isConjugationLoading || isProgressUpdatingLoading}
-						submitButtonText={'Sprawdź'}
-						onFormChange={handleFormPastChange}
-						onFormSubmit={handleFormPastSubmit}
-					/>
+					{
+						checked.includes(verb) && (
+							<Form
+								title={'Czas przeszły'}
+								inputs={inputsPast}
+								checked={checkedPast.includes(verb)}
+								formData={formDataPast}
+								errors={errorsPast}
+								success={successPast}
+								isSubmitting={isConjugationLoading || isProgressUpdatingLoading}
+								submitButtonText={'Sprawdź'}
+								onFormChange={handleFormPastChange}
+								onFormSubmit={handleFormPastSubmit}
+							/>
+						)
+					}
+
 				</React.Fragment>
 			)}
 		</>
 	)
 }
+
 
 export default compose(withRedux, withAuth, withLayout)(Conjugate)
