@@ -5,11 +5,16 @@ import { connectToDatabase } from '../utils/db'
 
 module.exports = async (req: NowRequest, res: NowResponse): Promise<void> => {
 	try {
-		const skips = PAGINATION_LIMIT * (Number(req.query.page) - 1)
+		const {page = 1, search = ''} = req.query
+		const skips = PAGINATION_LIMIT * (Number(page) - 1)
 
 		const db = await connectToDatabase(process.env.MONGODB_URI)
 		const collection = await db.collection('verbs')
-		const verbs = await collection.find({}).skip(skips).limit(PAGINATION_LIMIT).toArray()
+		const verbs = await collection
+			.find({ word: { $regex: `^${search}` } })
+			.skip(skips)
+			.limit(PAGINATION_LIMIT)
+			.toArray()
 
 		res.status(200).json({ verbs })
 	} catch (error) {
