@@ -1,15 +1,15 @@
 import { NowRequest, NowResponse } from '@now/node'
-import { connectToDatabase } from '../utils/db'
 
-const LIMIT = 8
+import {PAGINATION_LIMIT} from '../constants'
+import { connectToDatabase } from '../utils/db'
 
 module.exports = async (req: NowRequest, res: NowResponse): Promise<void> => {
 	try {
-		const skips = LIMIT * (Number(req.query.page) - 1)
+		const skips = PAGINATION_LIMIT * (Number(req.query.page) - 1)
 
 		const db = await connectToDatabase(process.env.MONGODB_URI)
 		const collection = await db.collection('verbs')
-		const verbs = await collection.find({}).skip(skips).limit(LIMIT).toArray()
+		const verbs = await collection.find({}).skip(skips).limit(PAGINATION_LIMIT).toArray()
 
 		res.status(200).json({ verbs })
 	} catch (error) {

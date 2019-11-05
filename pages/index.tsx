@@ -11,8 +11,10 @@ import { Block } from 'baseui/block'
 import { ListItem, ListItemLabel } from 'baseui/list'
 import { StyledLink } from 'baseui/link'
 import { Check } from 'baseui/icon'
-import { Label2 } from 'baseui/typography'
+import { Label2, Caption1 } from 'baseui/typography'
 import { Pagination } from 'baseui/pagination'
+
+import { PAGINATION_LIMIT } from '../constants'
 
 import { withRedux } from '../utils/redux'
 import getHost from '../utils/get-host'
@@ -53,7 +55,7 @@ function Index(): JSX.Element {
 					<Link key={verb._id} href={`/conjugate?verb=${verb.word}`}>
 						<StyledLink href={`/conjugate?verb=${verb.word}`}>
 							<ListItem endEnhancer={() => isPresentPassed(verb.word) || isPastPassed(verb.word) ? <Check color={isPastPassed(verb.word) ? 'black' : '#d8d8d8'} size={24} /> : null}>
-								<ListItemLabel>{verb.word}</ListItemLabel>
+								<ListItemLabel>{verb.word} <Caption1 as={'span'}>({verb.translate})</Caption1></ListItemLabel>
 							</ListItem>
 						</StyledLink>
 					</Link>
@@ -61,7 +63,7 @@ function Index(): JSX.Element {
 			</Block>
 			<Block display={'flex'} justifyContent={'center'}>
 				<Pagination
-					numPages={Math.round(verbsCount / 8)}
+					numPages={Math.round(verbsCount / PAGINATION_LIMIT)}
 					currentPage={Number(currentPage)}
 					onPageChange={pageChange}
 				/>
