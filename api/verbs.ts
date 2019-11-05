@@ -14,6 +14,7 @@ module.exports = async (req: NowRequest, res: NowResponse): Promise<void> => {
 			.find({ word: { $regex: `^${String(search).toLowerCase()}` } })
 			.skip(skips)
 			.limit(PAGINATION_LIMIT)
+			.sort({word: 1})
 			.toArray()
 
 		res.status(200).json({ verbs })
