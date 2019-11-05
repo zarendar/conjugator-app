@@ -11,7 +11,7 @@ module.exports = async (req: NowRequest, res: NowResponse): Promise<void> => {
 		const db = await connectToDatabase(process.env.MONGODB_URI)
 		const collection = await db.collection('verbs')
 		const verbs = await collection
-			.find({ word: { $regex: `^${search}` } })
+			.find({ word: { $regex: `^${String(search).toLowerCase()}` } })
 			.skip(skips)
 			.limit(PAGINATION_LIMIT)
 			.toArray()
