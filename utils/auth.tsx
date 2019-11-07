@@ -33,7 +33,7 @@ export const withAuth = (WrappedComponent: any) => {
 			const {progress} = await progressResponse.json()
 
 			reduxStore.dispatch({
-				type: 'GET_PROGRESS',
+				type: 'PROGRESS',
 				payload: progress
 			})
 		}

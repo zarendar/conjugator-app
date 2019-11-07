@@ -15,11 +15,11 @@ import { Label2, Caption1 } from 'baseui/typography'
 import { Pagination } from 'baseui/pagination'
 
 import { PAGINATION_LIMIT } from '../constants'
+import Layout from '../components/layout'
 
 import { withRedux } from '../utils/redux'
 import getHost from '../utils/get-host'
 import { withAuth } from '../utils/auth'
-import { withLayout } from '../utils/layout'
 
 function Index(): JSX.Element {
 	const {query, push} = useRouter()
@@ -40,7 +40,7 @@ function Index(): JSX.Element {
 	}
 
 	return (
-		<>
+		<Layout>
 			{!isEmpty(user) && <Block display={'flex'} justifyContent={'flex-end'} alignItems={'center'}>
 				<Check size={32}/>
 				<Label2 marginTop={0} marginBottom={0}>{past.length}/{verbsCount}</Label2>
@@ -68,7 +68,7 @@ function Index(): JSX.Element {
 					onPageChange={pageChange}
 				/>
 			</Block>
-		</>
+		</Layout>
 	)
 }
 
@@ -100,7 +100,7 @@ Index.getInitialProps = async (ctx) => {
 		const {progress} = await progressResponse.json()
 
 		reduxStore.dispatch({
-			type: 'GET_PROGRESS',
+			type: 'PROGRESS',
 			payload: progress
 		})
 	}
@@ -108,4 +108,4 @@ Index.getInitialProps = async (ctx) => {
 	return {}
 }
 
-export default compose(withRedux, withAuth, withLayout)(Index)
+export default compose(withRedux, withAuth)(Index)

@@ -1,34 +1,25 @@
 // @flow
 import { useRouter } from 'next/router'
-import cookie from 'js-cookie'
 import React from 'react'
-import fetch from 'unfetch'
+import {useDispatch} from 'react-redux'
+import cookie from 'js-cookie'
+import fetch from 'isomorphic-unfetch'
 import isEmpty from 'lodash.isempty'
 
 import Form from '../components/form'
 
-const USERNAME = 'Nazwa Użytkownika'
-
-interface FormData extends Record<string, string> {
-	[USERNAME]: string;
-}
-
-interface Errors {
-	[USERNAME]?: string;
-}
-
-interface Success {
-	[USERNAME]?: string;
-}
+import { withRedux } from '../utils/redux'
 
 interface ValidationResult {
-	errors: Errors;
-	success: Success;
+	errors: Record<string, string>;
+	success: Record<string, string>;
 }
+
+const USERNAME = 'Nazwa Użytkownika'
 
 const inputs = [USERNAME]
 
-function validate(formData: FormData): ValidationResult {
+function validate(formData: Record<string, string>): ValidationResult {
 	const errors = {}
 	const success = {}
 
@@ -46,16 +37,22 @@ function validate(formData: FormData): ValidationResult {
 
 function Login(): JSX.Element {
 	const router = useRouter()
+	const dispatch = useDispatch()
 	const [isLoginLoading, setIsLoginLoading] = React.useState(false)
 
-	async function handleFormSubmit(formData: FormData): Promise<void> {
+	async function handleFormSubmit(formData: Record<string, string>): Promise<void> {
 		setIsLoginLoading(true)
 
 		try {
-			const response = await fetch(`/api/login?username=${formData['Nazwa Użytkownika']}`)
+			const response = await fetch(`/api/login?username=${formData[USERNAME]}`)
 			const { user } = await response.json()
 
 			if (user._id) {
+				dispatch({
+					type: 'LOGIN',
+					payload: user
+				})
+
 				cookie.set('token', formData[USERNAME])
 				router.push('/')
 			}
@@ -76,4 +73,4 @@ function Login(): JSX.Element {
 	)
 }
 
-export default Login
+export default withRedux(Login)

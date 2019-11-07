@@ -20,7 +20,7 @@ const reducer = (state = initialState, action) => {
 			...state,
 			verbsCount: action.payload
 		}
-	case 'GET_PROGRESS':
+	case 'PROGRESS':
 		return {
 			...state,
 			progress: action.payload
@@ -34,11 +34,6 @@ const reducer = (state = initialState, action) => {
 		return {
 			...state,
 			user: {}
-		}
-	case 'UPDATE_PROGRESS':
-		return {
-			...state,
-			progress: action.payload
 		}
 	default:
 		return state

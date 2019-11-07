@@ -10,10 +10,10 @@ import uniq from 'lodash.uniq'
 import {Block} from 'baseui/block'
 import { H5 } from 'baseui/typography'
 
+import Layout from '../components/layout'
 import Form from '../components/form'
 
 import getHost from '../utils/get-host'
-import { withLayout } from '../utils/layout'
 import { withRedux } from '../utils/redux'
 import { withAuth } from '../utils/auth'
 
@@ -78,7 +78,7 @@ function Conjugate({translate, conjugation}: Props): JSX.Element {
 			setProgressUpdatingLoading(false)
 
 			dispatch({
-				type: 'UPDATE_PROGRESS',
+				type: 'PROGRESS',
 				payload: {
 					...progress,
 					[tense]: updatedChecked
@@ -90,7 +90,7 @@ function Conjugate({translate, conjugation}: Props): JSX.Element {
 	}
 
 	return (
-		<>
+		<Layout>
 			<H5 marginTop={'scale600'} marginBottom={'scale800'}>
 						Bezokolicznik: <strong>{verb}</strong> (
 				<Block as={'span'} color={'mono800'}>
@@ -122,7 +122,7 @@ function Conjugate({translate, conjugation}: Props): JSX.Element {
 					/>
 				)
 			}
-		</>
+		</Layout>
 	)
 }
 
@@ -145,4 +145,4 @@ Conjugate.getInitialProps = async (ctx: NextPageContext): Promise<Props> => {
 }
 
 
-export default compose(withRedux, withAuth, withLayout)(Conjugate)
+export default compose(withRedux, withAuth)(Conjugate)
