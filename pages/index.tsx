@@ -74,9 +74,10 @@ function Index(): JSX.Element {
 
 Index.getInitialProps = async (ctx) => {
 	const { reduxStore, req, query } = ctx
+	const {page = 1} = query
 	const { token } = nextCookie(ctx)
 
-	const getVerbsResponse = await fetch(`${getHost(req)}/api/verbs?page=${query.page}`)
+	const getVerbsResponse = await fetch(`${getHost(req)}/api/verbs?page=${page}`)
 	const { verbs } = await getVerbsResponse.json()
 
 	reduxStore.dispatch({
