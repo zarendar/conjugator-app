@@ -1,5 +1,7 @@
 // @flow
 import React from 'react'
+import isEmpty from 'lodash.isempty'
+
 import {Block} from 'baseui/block'
 import {H6} from 'baseui/typography'
 import {FormControl} from 'baseui/form-control'
@@ -11,29 +13,55 @@ import { Check } from 'baseui/icon'
 interface Props {
 	title: string;
 	inputs: string[];
-	formData: Record<string, string>;
-	errors: Record<string, string>;
 	isSubmitting: boolean;
 	submitButtonText: string;
-	onFormChange: any;
+	validation: any;
 	onFormSubmit: any;
 
 	checked?: boolean;
-	success: Record<string, boolean>;
 }
 
 export default function Form({
 	title,
 	inputs,
 	checked,
-	formData,
-	errors,
-	success,
 	isSubmitting,
 	submitButtonText,
-	onFormChange,
+	validation,
 	onFormSubmit,
 }: Props): JSX.Element{
+	const [formData, setFormData] = React.useState({})
+	const [errors, setErrors] = React.useState({})
+	const [success, setSuccess] = React.useState({})
+
+	function handleInputChange(event: React.ChangeEvent<HTMLInputElement>): void {
+		const {target: {name, value}} = event
+
+		setFormData({
+			...formData,
+			[name]: value,
+		})
+		setErrors({
+			...errors,
+			[name]: null,
+		})
+		setSuccess({
+			...success,
+			[name]: null,
+		})
+	}
+
+	function handleSubmit(): void {
+		const result = validation(formData)
+
+		setErrors(result.errors)
+		setSuccess(result.success)
+
+		if (isEmpty(result.errors)) {
+			onFormSubmit(formData)
+		}
+	}
+
 	return (
 		<Block marginBottom={'scale800'}>
 			<Card>
@@ -53,12 +81,12 @@ export default function Form({
 							error={Boolean(errors[input])}
 							positive={success[input]}
 							value={formData[input]}
-							onChange={onFormChange}
+							onChange={handleInputChange}
 						/>
 					</FormControl>
 				))}
 				<Block display={'flex'} justifyContent={'flex-end'}>
-					<Button isLoading={isSubmitting} onClick={onFormSubmit}>
+					<Button isLoading={isSubmitting} onClick={handleSubmit}>
 						{submitButtonText}
 					</Button>
 				</Block>

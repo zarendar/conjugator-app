@@ -7,78 +7,70 @@ import isEmpty from 'lodash.isempty'
 
 import Form from '../components/form'
 
+const USERNAME = 'Nazwa Użytkownika'
+
 interface FormData extends Record<string, string> {
-	'Nazwa Użytkownika': string;
+	[USERNAME]: string;
 }
 
 interface Errors {
-	'Nazwa Użytkownika'?: string;
+	[USERNAME]?: string;
 }
 
-const inputs = ['Nazwa Użytkownika']
+interface Success {
+	[USERNAME]?: string;
+}
 
-const initialFormData = { 'Nazwa Użytkownika': '' }
+interface ValidationResult {
+	errors: Errors;
+	success: Success;
+}
 
-function validate(fromData: FormData): Errors {
-	return fromData['Nazwa Użytkownika'] ? {} : {'Nazwa Użytkownika': 'Wymagana jest nazwa użytkownika'}
+const inputs = [USERNAME]
+
+function validate(formData: FormData): ValidationResult {
+	const errors = {}
+	const success = {}
+
+	if (isEmpty(formData[USERNAME])) {
+		errors[USERNAME] = 'Wymagana jest nazwa użytkownika'
+	} else {
+		success[USERNAME] = true
+	}
+
+	return {
+		errors,
+		success,
+	}
 }
 
 function Login(): JSX.Element {
 	const router = useRouter()
-
 	const [isLoginLoading, setIsLoginLoading] = React.useState(false)
-	const [formData, setFormData] = React.useState<FormData>(initialFormData)
-	const [errors, setErrors] = React.useState({})
 
-	function emitLogin() {
+	async function handleFormSubmit(formData: FormData): Promise<void> {
 		setIsLoginLoading(true)
 
-		fetch(`/api/login?username=${formData['Nazwa Użytkownika']}`)
-			.then(r => r.json())
-			.then(({user}) => {
-				setIsLoginLoading(false)
-				console.log(user)
+		try {
+			const response = await fetch(`/api/login?username=${formData['Nazwa Użytkownika']}`)
+			const { user } = await response.json()
 
-				if (user._id) {
-					cookie.set('token', formData['Nazwa Użytkownika'])
-					router.push('/')
-				}
-			})
-			.catch(() => {
-				setIsLoginLoading(false)
-			})
-	}
-
-	function handleFormSubmit() {
-		const result = validate(formData)
-		setErrors(result)
-
-		if (isEmpty(result)) {
-			emitLogin()
+			if (user._id) {
+				cookie.set('token', formData[USERNAME])
+				router.push('/')
+			}
+		} catch (error) {
+			setIsLoginLoading(false)
 		}
-	}
-
-	function handleFormChange(event) {
-		setFormData({
-			...formData,
-			[event.target.name]: event.target.value,
-		})
-		setErrors({
-			...errors,
-			[event.target.name]: null,
-		})
 	}
 
 	return (
 		<Form
 			title={'Zaloguj się'}
 			inputs={inputs}
-			formData={formData}
-			errors={errors}
-			success={{}}
 			isSubmitting={isLoginLoading}
 			submitButtonText={'Zatwierdź'}
-			onFormChange={handleFormChange}
+			validation={validate}
 			onFormSubmit={handleFormSubmit}
 		/>
 	)

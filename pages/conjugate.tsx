@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { NextPageContext } from 'next'
 import { useRouter } from 'next/router'
 import fetch from 'isomorphic-unfetch'
-import isEmpty from 'lodash.isempty'
 import uniq from 'lodash.uniq'
 
 import {Block} from 'baseui/block'
@@ -29,17 +28,18 @@ interface Props {
 	conjugation: Conjugation;
 }
 
-const inputs = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
+const inputsPresent = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
+
 const inputsPast = ['ja (m)', 'ja (f)', 'ty (m)', 'ty (f)', 'on', 'ona', 'ono', 'my (m)', 'my (f)', 'wy (m)', 'wy (f)', 'oni', 'one']
 
-function validate(fromData, conjugation) {
+function validate(formData, tense) {
 	const errors = {}
 	const success = {}
 
-	for (const i in conjugation) {
-		const currentInput = fromData[i] && fromData[i].toLowerCase()
-		if (currentInput !== conjugation[i]) {
-			errors[i] = conjugation[i]
+	for (const i in tense) {
+		const currentInput = formData[i] && formData[i].toLowerCase()
+		if (currentInput !== tense[i]) {
+			errors[i] = tense[i]
 		} else {
 			success[i] = true
 		}
@@ -53,129 +53,39 @@ function validate(fromData, conjugation) {
 
 function Conjugate({translate, conjugation}: Props): JSX.Element {
 	const router = useRouter()
-	const { verb } = router.query
-
 	const progress = useSelector(state => state.progress)
 	const dispatch = useDispatch()
 
-	const [isProgressUpdatingLoading,setProgressUpdatingLoading] = React.useState(false)
-	const [formData, setFormData] = React.useState({})
-	const [formDataPast, setFormDataPast] = React.useState({})
-	const [errors, setErrors] = React.useState({})
-	const [errorsPast, setErrorsPast] = React.useState({})
-	const [success, setSuccess] = React.useState({})
-	const [successPast, setSuccessPast] = React.useState({})
-	const [checked, setChecked] = React.useState<any>(progress.present || [])
-	const [checkedPast, setCheckedPast] = React.useState<any>(progress.past || [])
+	const [isProgressUpdatingLoading, setProgressUpdatingLoading] = React.useState(false)
 
-	React.useEffect(() => {
-		if (verb) {
-			setFormData({})
-			setFormDataPast({})
-			setErrors({})
-			setErrorsPast({})
-			setSuccess({})
-			setSuccessPast({})
-		}
-	}, [verb])
+	const { verb } = router.query
+	const {present = [], past = []} = progress
 
-	function handleFormChange(event) {
-		setFormData({
-			...formData,
-			[event.target.name]: event.target.value,
-		})
-		setErrors({
-			...errors,
-			[event.target.name]: null,
-		})
-		setSuccess({
-			...success,
-			[event.target.name]: null,
-		})
-	}
+	async function updateProgress(tense: string): Promise<void> {
+		const updatedChecked = uniq([...progress[tense], verb])
 
-	function handleFormPastChange(event) {
-		setFormDataPast({
-			...formDataPast,
-			[event.target.name]: event.target.value,
-		})
-		setErrorsPast({
-			...success,
-			[event.target.name]: null,
-		})
-		setSuccessPast({
-			...errors,
-			[event.target.name]: null,
-		})
-	}
+		setProgressUpdatingLoading(true)
 
-	async function handleFormSubmit() {
-		const result = validate(formData, conjugation.present)
-		setErrors(result.errors)
-		setSuccess(result.success)
+		try {
+			await fetch('/api/update-progress', {
+				method: 'PUT',
+				body: JSON.stringify({[tense]: updatedChecked}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
 
-		if (isEmpty(result.errors)) {
-			const updatedChecked = uniq([...checked, verb])
+			setProgressUpdatingLoading(false)
 
-			setProgressUpdatingLoading(true)
-
-			try {
-				await fetch('/api/update-progress', {
-					method: 'PUT',
-					body: JSON.stringify({present: updatedChecked}),
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				})
-
-				setChecked(updatedChecked)
-				setProgressUpdatingLoading(false)
-
-				dispatch({
-					type: 'UPDATE_PROGRESS',
-					payload: {
-						...progress,
-						present: updatedChecked
-					}
-				})
-			} catch (error) {
-				setProgressUpdatingLoading(false)
-			}
-		}
-	}
-
-	async function handleFormPastSubmit() {
-		const result = validate(formDataPast, conjugation.past)
-		setErrorsPast(result.errors)
-		setSuccessPast(result.success)
-
-		if (isEmpty(result.errors)) {
-			const updatedChecked = uniq([...checkedPast, verb])
-
-			setProgressUpdatingLoading(true)
-
-			try {
-				await fetch('/api/update-progress', {
-					method: 'PUT',
-					body: JSON.stringify({past: updatedChecked}),
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				})
-
-				setCheckedPast(updatedChecked)
-				setProgressUpdatingLoading(false)
-
-				dispatch({
-					type: 'UPDATE_PROGRESS',
-					payload: {
-						...progress,
-						past: updatedChecked
-					}
-				})
-			} catch (error) {
-				setProgressUpdatingLoading(false)
-			}
+			dispatch({
+				type: 'UPDATE_PROGRESS',
+				payload: {
+					...progress,
+					[tense]: updatedChecked
+				}
+			})
+		} catch (error) {
+			setProgressUpdatingLoading(false)
 		}
 	}
 
@@ -190,29 +100,25 @@ function Conjugate({translate, conjugation}: Props): JSX.Element {
 			</H5>
 			<Form
 				title={'Czas teraźniejszy'}
-				inputs={inputs}
-				checked={checked.includes(verb)}
-				formData={formData}
-				errors={errors}
-				success={success}
+				inputs={inputsPresent}
 				isSubmitting={isProgressUpdatingLoading}
 				submitButtonText={'Sprawdź'}
-				onFormChange={handleFormChange}
-				onFormSubmit={handleFormSubmit}
+				validation={formData => validate(formData, conjugation.present)}
+				onFormSubmit={(): Promise<void> => updateProgress('present')}
+
+				checked={present.includes(verb)}
 			/>
 			{
-				checked.includes(verb) && (
+				present.includes(verb) && (
 					<Form
 						title={'Czas przeszły'}
 						inputs={inputsPast}
-						checked={checkedPast.includes(verb)}
-						formData={formDataPast}
-						errors={errorsPast}
-						success={successPast}
 						isSubmitting={isProgressUpdatingLoading}
 						submitButtonText={'Sprawdź'}
-						onFormChange={handleFormPastChange}
-						onFormSubmit={handleFormPastSubmit}
+						validation={formData => validate(formData, conjugation.past)}
+						onFormSubmit={(): Promise<void> => updateProgress('past')}
+
+						checked={past.includes(verb)}
 					/>
 				)
 			}
