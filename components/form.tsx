@@ -6,7 +6,7 @@ import {Block} from 'baseui/block'
 import {H6} from 'baseui/typography'
 import {FormControl} from 'baseui/form-control'
 import {Input} from 'baseui/input'
-import { Button } from 'baseui/button'
+import { Button, KIND } from 'baseui/button'
 import { Card } from 'baseui/card'
 import { Check } from 'baseui/icon'
 
@@ -51,6 +51,12 @@ export default function Form({
 		})
 	}
 
+	function handleReset(): void {
+		setFormData({})
+		setErrors({})
+		setSuccess({})
+	}
+
 	function handleSubmit(): void {
 		const result = validation(formData)
 
@@ -80,12 +86,15 @@ export default function Form({
 							name={input}
 							error={Boolean(errors[input])}
 							positive={success[input]}
-							value={formData[input]}
+							value={formData[input] || ''}
 							onChange={handleInputChange}
 						/>
 					</FormControl>
 				))}
 				<Block display={'flex'} justifyContent={'flex-end'}>
+					<Button kind={KIND.minimal} onClick={handleReset}>
+						Wyczyść
+					</Button>
 					<Button isLoading={isSubmitting} onClick={handleSubmit}>
 						{submitButtonText}
 					</Button>

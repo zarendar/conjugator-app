@@ -37,7 +37,7 @@ function validate(formData, tense) {
 	const success = {}
 
 	for (const i in tense) {
-		const currentInput = formData[i] && formData[i].toLowerCase()
+		const currentInput = formData[i] && formData[i].trim().toLowerCase()
 		if (currentInput !== tense[i]) {
 			errors[i] = tense[i]
 		} else {

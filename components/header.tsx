@@ -12,6 +12,15 @@ import { Button } from 'baseui/button'
 
 import { FaUser } from 'react-icons/fa'
 
+const usernameStyle = {
+	marginBottom: 0,
+	marginTop: 0,
+	marginLeft: '10px',
+	lineHeight: 'normal'
+}
+
+const linkStyle = { cursor: 'pointer' }
+
 function Header(): JSX.Element {
 	const user = useSelector(state => state.user)
 	const dispatch = useDispatch()
@@ -30,24 +39,17 @@ function Header(): JSX.Element {
 			marginBottom={'scale600'}
 		>
 			<Link href={'/'}>
-				<StyledLink href={'/'} style={{cursor: 'pointer'}}>Lista Czasowników</StyledLink>
+				<StyledLink href={'/'} style={linkStyle}>Lista Czasowników</StyledLink>
 			</Link>
 			{isEmpty(user) ? (
 				<Link href={'/login'}>
-					<StyledLink href={'/login'} style={{cursor: 'pointer'}}>Zaloguj się</StyledLink>
+					<StyledLink href={'/login'} style={linkStyle}>Zaloguj się</StyledLink>
 				</Link>
 			) : (
-				<StatefulPopover content={<Button onClick={handleButtonClick}>Logout</Button>}>
-					<Block display={'flex'} alignItems={'center'} $style={{cursor: 'pointer'}}>
+				<StatefulPopover content={<Button onClick={handleButtonClick}>Wyloguj</Button>}>
+					<Block display={'flex'} alignItems={'center'} $style={linkStyle}>
 						<FaUser />
-						<Label2
-							$style={{
-								marginBottom: 0,
-								marginTop: 0,
-								marginLeft: '10px',
-								lineHeight: 'normal'
-							}}
-						>
+						<Label2 $style={usernameStyle}>
 							{user.username}
 						</Label2>
 					</Block>
