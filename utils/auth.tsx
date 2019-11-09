@@ -1,5 +1,6 @@
 import React from 'react'
 import nextCookie from 'next-cookies'
+import cookie from 'js-cookie'
 import isEmpty from 'lodash.isempty'
 import fetch from 'isomorphic-unfetch'
 
@@ -25,7 +26,12 @@ export const withAuth = (WrappedComponent: any) => {
 					'authorization': token,
 				}
 			})
-			const { user } = await loginResponse.json()
+			const { error, user } = await loginResponse.json()
+
+			if (error) {
+				cookie.remove('token')
+				return
+			}
 
 			reduxStore.dispatch({
 				type: 'LOGIN',
@@ -39,7 +45,12 @@ export const withAuth = (WrappedComponent: any) => {
 					'authorization': token,
 				}
 			})
-			const {progress} = await progressResponse.json()
+			const { error, progress } = await progressResponse.json()
+
+			if (error) {
+				cookie.remove('token')
+				return
+			}
 
 			reduxStore.dispatch({
 				type: 'PROGRESS',

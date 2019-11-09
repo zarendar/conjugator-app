@@ -10,11 +10,17 @@ module.exports = async (req: NowRequest, res: NowResponse): Promise<void> => {
 	try {
 		const credentials = jwt.verify(authorization, process.env.JWT_KEY)
 
+		if (!credentials) {
+			res.status(401).json({error: 'Token jest nieprawidłowy'})
+			return
+		}
+
 		const User = await createUserModel(process.env.MONGODB_URI)
 		const user = await User.findOne({ _id: credentials._id, 'tokens.token': authorization })
 
 		if (!user) {
-			res.status(401).json('Nieautoryzowany')
+			res.status(401).json({error: 'Nieautoryzowany'})
+			return
 		}
 
 		const db = await connectToDatabase(process.env.MONGODB_URI)

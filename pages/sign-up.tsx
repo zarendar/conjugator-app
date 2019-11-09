@@ -97,7 +97,7 @@ function SignUp(): JSX.Element {
 					payload: user
 				})
 
-				cookie.set('token', token)
+				cookie.set('token', token, { expires: 365 })
 				router.push('/')
 			}
 		} catch (error) {

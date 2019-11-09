@@ -7,7 +7,8 @@ module.exports = async (req: NowRequest, res: NowResponse): Promise<void> => {
 	const { authorization } = req.headers
 
 	if (!authorization) {
-		res.status(401).json('Nieautoryzowany')
+		res.status(401).json({error: 'Nieautoryzowany'})
+		return
 	}
 
 	try {
@@ -19,7 +20,12 @@ module.exports = async (req: NowRequest, res: NowResponse): Promise<void> => {
 		}
 
 		const User = await createUserModel(process.env.MONGODB_URI)
-		const user = await User.findOne({_id: credentials._id, 'tokens.token': authorization})
+		const user = await User.findOne({ _id: credentials._id, 'tokens.token': authorization })
+
+		if (!credentials) {
+			res.status(401).json({error: 'Nieautoryzowany'})
+			return
+		}
 
 		res.json({ user })
 	} catch (error) {
