@@ -12,7 +12,7 @@ import { Check } from 'baseui/icon'
 
 interface Props {
 	title: string;
-	inputs: string[];
+	inputs: {type?: string; name: string}[];
 	isSubmitting: boolean;
 	submitButtonText: string;
 	validation: any;
@@ -78,15 +78,16 @@ export default function Form({
 					marginBottom={'scale600'}>
 					{title} {checked && <Check size={32} />}
 				</H6>
-				{inputs.map(input => (
-					<FormControl key={input} error={errors[input]} label={input}>
+				{inputs.map(({type, name}) => (
+					<FormControl key={name} error={errors[name]} label={name}>
 						<Input
+							type={type || 'text'}
 							autoComplete={'off'}
 							disabled={isSubmitting}
-							name={input}
-							error={Boolean(errors[input])}
-							positive={success[input]}
-							value={formData[input] || ''}
+							name={name}
+							error={Boolean(errors[name])}
+							positive={success[name]}
+							value={formData[name] || ''}
 							onChange={handleInputChange}
 						/>
 					</FormControl>

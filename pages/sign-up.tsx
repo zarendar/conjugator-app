@@ -9,8 +9,8 @@ import fetch from 'isomorphic-unfetch'
 import isEmpty from 'lodash.isempty'
 import  validator from 'validator'
 
+import { StyledLink } from 'baseui/link'
 import { toaster } from 'baseui/toast'
-import {StyledLink} from 'baseui/link'
 
 import Form from '../components/form'
 import { withRedux } from '../utils/redux'
@@ -22,10 +22,12 @@ interface ValidationResult {
 
 const USERNAME = 'Nazwa Użytkownika'
 const PASSWORD = 'Hasło'
+const REPEAT_PASSWORD = 'Powtórz hasło'
 
 const inputs = [
 	{ name: USERNAME },
-	{ name: PASSWORD, type: 'password' }
+	{ name: PASSWORD, type: 'password' },
+	{ name: REPEAT_PASSWORD, type: 'password' }
 ]
 
 function validate(formData: Record<string, string>): ValidationResult {
@@ -38,12 +40,20 @@ function validate(formData: Record<string, string>): ValidationResult {
 		errors[USERNAME] = 'Powinien zawierać tylko litery i cyfry.'
 	}
 
-
-
 	if (isEmpty(formData[PASSWORD])) {
 		errors[PASSWORD] = 'Wymagana jest hasło'
 	} else if (formData[PASSWORD].length < 6) {
 		errors[PASSWORD] = 'Musi mieć co najmniej 6 znaków'
+	}
+
+	if (isEmpty(formData[REPEAT_PASSWORD])) {
+		errors[REPEAT_PASSWORD] = 'Wymagana jest hasło'
+	} else if (formData[REPEAT_PASSWORD].length < 6) {
+		errors[REPEAT_PASSWORD] = 'Musi mieć co najmniej 6 znaków'
+	}
+
+	if (formData[PASSWORD] !== formData[REPEAT_PASSWORD]) {
+		errors[REPEAT_PASSWORD] = 'Hasła nie pasują do siebie'
 	}
 
 	return {
@@ -52,7 +62,7 @@ function validate(formData: Record<string, string>): ValidationResult {
 	}
 }
 
-function Login(): JSX.Element {
+function SignUp(): JSX.Element {
 	const router = useRouter()
 	const dispatch = useDispatch()
 	const [isLoginLoading, setIsLoginLoading] = React.useState(false)
@@ -61,7 +71,7 @@ function Login(): JSX.Element {
 		setIsLoginLoading(true)
 
 		try {
-			const response = await fetch('/api/login', {
+			const response = await fetch('/api/create-user', {
 				method: 'POST',
 				body: JSON.stringify({
 					username: formData[USERNAME],
@@ -72,6 +82,7 @@ function Login(): JSX.Element {
 				}
 			})
 			const { error, user, token } = await response.json()
+			console.log(error)
 
 			if (error) {
 				setIsLoginLoading(false)
@@ -105,23 +116,23 @@ function Login(): JSX.Element {
 				</StyledLink>
 			</Link>
 			<Form
-				title={'Zaloguj się'}
+				title={'Zapisz się'}
 				inputs={inputs}
 				isSubmitting={isLoginLoading}
 				submitButtonText={'Zatwierdź'}
 				validation={validate}
 				onFormSubmit={handleFormSubmit}
 			/>
-			<Link href={'/sign-up'}>
+			<Link href={'/login'}>
 				<StyledLink
-					href={'/sign-up'}
+					href={'/login'}
 					style={{ display: 'block', textAlign: 'center', cursor: 'pointer' }}
 				>
-					Zapisz się
+					Zaloguj się
 				</StyledLink>
 			</Link>
 		</>
 	)
 }
 
-export default withRedux(Login)
+export default withRedux(SignUp)

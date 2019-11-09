@@ -28,8 +28,8 @@ function Index(): JSX.Element {
 	const progress = useSelector(state => state.progress)
 	const user = useSelector(state => state.user)
 
-	const present = progress.present || []
-	const past = progress.past || []
+	const present = progress && progress.present || []
+	const past = progress && progress.past || []
 	const isPresentPassed = word => present.includes(word)
 	const isPastPassed = word => past.includes(word)
 
@@ -92,16 +92,6 @@ Index.getInitialProps = async (ctx) => {
 		reduxStore.dispatch({
 			type: 'GET_VERBS_COUNT',
 			payload: verbsCount
-		})
-	}
-
-	if (isEmpty(reduxStore.getState().progress) && token) {
-		const progressResponse = await fetch(`${getHost(req)}/api/progress?username=${token}`)
-		const {progress} = await progressResponse.json()
-
-		reduxStore.dispatch({
-			type: 'PROGRESS',
-			payload: progress
 		})
 	}
 

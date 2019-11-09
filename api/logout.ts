@@ -14,15 +14,12 @@ module.exports = async (req: NowRequest, res: NowResponse): Promise<void> => {
 		const User = await createUserModel(process.env.MONGODB_URI)
 		const user = await User.findOne({ _id: credentials._id, 'tokens.token': authorization })
 
-		if (!user) {
-			res.status(401).json('Nieautoryzowany')
-		}
+		user.tokens = user.tokens.filter((token) => {
+			return token.token != authorization
+		})
+		await user.save()
 
-		const db = await connectToDatabase(process.env.MONGODB_URI)
-		const collection = await db.collection('progresses')
-		const progress = await collection.find({username: user.username}).toArray()
-
-		res.status(200).json({ progress: progress[0] })
+		res.status(200).json({ status: 'ok' })
 	} catch (error) {
 		res.status(500).json({error})
 	}

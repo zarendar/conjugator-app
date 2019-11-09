@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useSelector, useDispatch } from 'react-redux'
 import cookie from 'js-cookie'
 import isEmpty from 'lodash.isempty'
+import fetch from 'isomorphic-unfetch'
 
 import { Block } from 'baseui/block'
 import { StyledLink } from 'baseui/link'
@@ -25,7 +26,13 @@ function Header(): JSX.Element {
 	const user = useSelector(state => state.user)
 	const dispatch = useDispatch()
 
-	function handleButtonClick(): void {
+	async function handleButtonClick(): Promise<void> {
+		await fetch('/api/logout', {
+			headers: {
+				'authorization': cookie.get('token'),
+			}
+		})
+
 		dispatch({ type: 'LOGOUT' })
 		dispatch({ type: 'PROGRESS', payload: {} })
 

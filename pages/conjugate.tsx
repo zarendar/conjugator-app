@@ -6,6 +6,7 @@ import { NextPageContext } from 'next'
 import { useRouter } from 'next/router'
 import fetch from 'isomorphic-unfetch'
 import uniq from 'lodash.uniq'
+import cookie from 'js-cookie'
 
 import {Block} from 'baseui/block'
 import { H5 } from 'baseui/typography'
@@ -28,9 +29,30 @@ interface Props {
 	conjugation: Conjugation;
 }
 
-const inputsPresent = ['ja', 'ty', 'on/ona/ono', 'my', 'wy', 'oni/one']
+const inputsPresent = [
+	{ name: 'ja' },
+	{ name: 'ty' },
+	{ name: 'on/ona/ono' },
+	{ name: 'my' },
+	{ name: 'wy' },
+	{ name: 'oni/one' }
+]
 
-const inputsPast = ['ja (m)', 'ja (f)', 'ty (m)', 'ty (f)', 'on', 'ona', 'ono', 'my (m)', 'my (f)', 'wy (m)', 'wy (f)', 'oni', 'one']
+const inputsPast = [
+	{ name: 'ja (m)' },
+	{ name: 'ja (f)' },
+	{ name: 'ty (m)' },
+	{ name: 'ty (f)' },
+	{ name: 'on' },
+	{ name: 'ona' },
+	{ name: 'ono' },
+	{ name: 'my (m)' },
+	{ name: 'my (f)' },
+	{ name: 'wy (m)' },
+	{ name: 'wy (f)' },
+	{ name: 'oni' },
+	{ name: 'one' },
+]
 
 function validate(formData, tense) {
 	const errors = {}
@@ -62,30 +84,35 @@ function Conjugate({translate, conjugation}: Props): JSX.Element {
 	const {present = [], past = []} = progress
 
 	async function updateProgress(tense: string): Promise<void> {
-		const updatedChecked = uniq([...progress[tense], verb])
+		const checked = progress[tense] || []
+		const updatedChecked = uniq([...checked, verb])
+		const token = cookie.get('token')
 
-		setProgressUpdatingLoading(true)
+		if (token) {
+			setProgressUpdatingLoading(true)
 
-		try {
-			await fetch('/api/update-progress', {
-				method: 'PUT',
-				body: JSON.stringify({[tense]: updatedChecked}),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			})
+			try {
+				await fetch('/api/update-progress', {
+					method: 'PUT',
+					body: JSON.stringify({[tense]: updatedChecked}),
+					headers: {
+						'Authorization': cookie.get('token'),
+						'Content-Type': 'application/json'
+					}
+				})
 
-			setProgressUpdatingLoading(false)
+				setProgressUpdatingLoading(false)
 
-			dispatch({
-				type: 'PROGRESS',
-				payload: {
-					...progress,
-					[tense]: updatedChecked
-				}
-			})
-		} catch (error) {
-			setProgressUpdatingLoading(false)
+				dispatch({
+					type: 'PROGRESS',
+					payload: {
+						...progress,
+						[tense]: updatedChecked
+					}
+				})
+			} catch (error) {
+				setProgressUpdatingLoading(false)
+			}
 		}
 	}
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import nextCookie from 'next-cookies'
 import isEmpty from 'lodash.isempty'
+import fetch from 'isomorphic-unfetch'
 
 import getHost from '../utils/get-host'
 
@@ -19,7 +20,11 @@ export const withAuth = (WrappedComponent: any) => {
 		(await WrappedComponent.getInitialProps(ctx))
 
 		if (isEmpty(state.user) && token) {
-			const loginResponse = await fetch(`${getHost(ctx.req)}/api/login?username=${token}`)
+			const loginResponse = await fetch(`${getHost(ctx.req)}/api/me`, {
+				headers: {
+					'authorization': token,
+				}
+			})
 			const { user } = await loginResponse.json()
 
 			reduxStore.dispatch({
@@ -28,8 +33,12 @@ export const withAuth = (WrappedComponent: any) => {
 			})
 		}
 
-		if (isEmpty(reduxStore.getState().progress) && token) {
-			const progressResponse = await fetch(`${getHost(ctx.req)}/api/progress?username=${token}`)
+		if (isEmpty(state.progress) && token) {
+			const progressResponse = await fetch(`${getHost(ctx.req)}/api/progress`, {
+				headers: {
+					'authorization': token,
+				}
+			})
 			const {progress} = await progressResponse.json()
 
 			reduxStore.dispatch({
