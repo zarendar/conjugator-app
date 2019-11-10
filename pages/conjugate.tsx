@@ -126,6 +126,7 @@ function Conjugate({translate, conjugation}: Props): JSX.Element {
 						)
 			</H5>
 			<Form
+				id={String(verb)}
 				title={'Czas teraźniejszy'}
 				inputs={inputsPresent}
 				isSubmitting={isProgressUpdatingLoading}
@@ -138,6 +139,7 @@ function Conjugate({translate, conjugation}: Props): JSX.Element {
 			{
 				present.includes(verb) && (
 					<Form
+						id={String(verb)}
 						title={'Czas przeszły'}
 						inputs={inputsPast}
 						isSubmitting={isProgressUpdatingLoading}

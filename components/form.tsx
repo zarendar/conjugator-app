@@ -18,10 +18,12 @@ interface Props {
 	validation: any;
 	onFormSubmit: any;
 
+	id?: string;
 	checked?: boolean;
 }
 
 export default function Form({
+	id,
 	title,
 	inputs,
 	checked,
@@ -33,6 +35,16 @@ export default function Form({
 	const [formData, setFormData] = React.useState({})
 	const [errors, setErrors] = React.useState({})
 	const [success, setSuccess] = React.useState({})
+
+	function reset(): void {
+		setFormData({})
+		setErrors({})
+		setSuccess({})
+	}
+
+	React.useEffect(() => {
+		reset()
+	}, [id])
 
 	function handleInputChange(event: React.ChangeEvent<HTMLInputElement>): void {
 		const {target: {name, value}} = event
@@ -49,12 +61,6 @@ export default function Form({
 			...success,
 			[name]: null,
 		})
-	}
-
-	function handleReset(): void {
-		setFormData({})
-		setErrors({})
-		setSuccess({})
 	}
 
 	function handleSubmit(): void {
@@ -93,7 +99,7 @@ export default function Form({
 					</FormControl>
 				))}
 				<Block display={'flex'} justifyContent={'flex-end'}>
-					<Button kind={KIND.minimal} onClick={handleReset}>
+					<Button kind={KIND.minimal} onClick={reset}>
 						Wyczyść
 					</Button>
 					<Button isLoading={isSubmitting} onClick={handleSubmit}>
