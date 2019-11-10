@@ -61,7 +61,7 @@ function Search() {
 			isLoading={isVerbsLoading}
 			openOnClick={false}
 			options={verbs.map(fromVerbToOption)}
-			placeholder="verb"
+			placeholder="Szukać"
 			maxDropdownHeight="300px"
 			type={TYPE.search}
 			value={value}
