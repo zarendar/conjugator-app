@@ -35,7 +35,7 @@
     "styletron-engine-atomic": "^1.4.3",
     "styletron-react": "^5.2.4",
     "unfetch": "^4.1.0",
-    "validator": "^12.0.0"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "@now/node": "^1.0.2",
